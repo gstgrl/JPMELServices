@@ -1,14 +1,11 @@
 import { defineStore } from 'pinia';
-import { usePalletStore } from './palletStore';
 import { ref } from 'vue';
 
 export const useCameraStore = defineStore('camera', () => {
   const isCameraActive = ref(false);
   const scannedCode = ref(null);
   const permissionGranted = ref(false);
-  const beepSound = new Audio('/suoni/beep.mp3');
-
-  const palletStore = usePalletStore()
+  //const beepSound = new Audio('/suoni/beep.mp3');
   let scanner = null;
 
   // 🔹 Controllo permessi fotocamera
@@ -30,7 +27,7 @@ export const useCameraStore = defineStore('camera', () => {
       await checkPermissions()
       return;
     }
-    
+
     scanner = new Html5Qrcode("scanner-container");
 
     try {
