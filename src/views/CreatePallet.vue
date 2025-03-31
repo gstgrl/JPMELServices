@@ -1,12 +1,11 @@
 <script setup>
-    import { ref } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import { useRouter } from "vue-router";
     import { generateQRCodeAndSave } from '@/services/generateQrcode';
     import scanner from '@/components/scanner.vue';
 
     //Pinia Stores
     import { usePalletStore } from '@/stores/palletStore';
-    import { useOrder } from '@/stores/order';
     import { useAuthStore } from '@/stores/auth';
     import { useDeviceStore } from '@/stores/diveceStore';
     import { useCameraStore } from '@/stores/cameraStore';
@@ -16,7 +15,6 @@
     
     //Pinia stores
     const palletStore = usePalletStore()
-    const order = useOrder()
     const authStore = useAuthStore()
     const deviceStore = useDeviceStore()
     const cameraStore = useCameraStore()
@@ -27,17 +25,8 @@
     const router = useRouter();
 
     const addOrderInPallet = async() => {
-
-        await order.findOrder(barcodeTakenByForm.value).then((found) => {
-            if(found) {
-                palletStore.addOrder(order.item)
-            }
-        }).catch((error) => {
-            console.error("Errore durante l'aggiunta dell'ordine:", error);
-        });
-
+        await palletStore.findOrder(barcodeTakenByForm.value)
         barcodeTakenByForm.value = ""
-        order.resetOrder()
     }
 
     const close = async() => {
@@ -47,9 +36,18 @@
         palletStore.resetPallet()
         router.push("/dashboard")
     }
+
+    onMounted(async() => {
+        if(deviceStore.isMobile) {await cameraStore.checkPermissions()}
+    })
+
+    watch(() => cameraStore.scannedCode, async (newCode) => {
+        if (newCode) {
+            scannedCode.value = newCode;
+            await palletStore.findOrder(newCode);
+        }
+    });
 </script>
-
-
 
 
 

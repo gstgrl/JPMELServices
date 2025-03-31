@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { updateDoc, getDocs, collection, query, where, arrayUnion, increment } from "firebase/firestore";
+import { useOrder } from "./order";
+import { updateDoc, getDocs, getDoc, collection, query, where, arrayUnion, increment,doc } from "firebase/firestore";
 import { db } from "@/services/firebase";
 
 export const usePalletStore = defineStore("pallet", {
@@ -48,6 +49,28 @@ export const usePalletStore = defineStore("pallet", {
         } catch (error) {
           console.error(`Errore durante la ricerca del prodotto con barcode ${barcode}:`, error);
         }
+      }
+    },
+    async findOrder(barcode) { //Mi trova l'ordine con il suo rispettivo codice a barre e che sia in Packaging
+      const orderStore = useOrder()
+
+      try {
+        const docRef = doc(db, "packages", barcode); // Riferimento al documento
+        const docSnap = await getDoc(docRef); // Ottieni il documento
+    
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          if (data.statusCount === 1) {
+            orderStore.setOrder(data.name, data.surname, data.address, data.province, data.city, data.phoneNumber, barcode)
+            this.addOrder(orderStore.item)
+            orderStore.resetOrder()
+          }
+
+        } else {
+          window.alert("Nessun documento trovato!");
+        }
+      } catch (error) {
+        console.error("Errore nel recupero del documento:", error);
       }
     },
     removeOrder(barcode) {

@@ -12,7 +12,7 @@
     const saveOrder = () => {
         palletStore.addOrder(order.item)
         order.saveOrderOnDB()
-        //generateLabelPDF(order.item)
+        generateLabelPDF(order.item)
 
         generatedBarcode.value = false
         order.resetOrder()

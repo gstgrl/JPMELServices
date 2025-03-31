@@ -1,7 +1,7 @@
 // src/stores/orderStore.js
 import { defineStore } from 'pinia';
 import { db } from "@/services/firebase";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, doc, setDoc } from "firebase/firestore";
 
 export const useOrder = defineStore('orderStore', {
   state: () => ({
@@ -31,42 +31,35 @@ export const useOrder = defineStore('orderStore', {
       };
     },
 
-    async saveOrderOnDB() { //Mi salva l'ordine nel database, attualmente Firebase
-        await addDoc(collection(db, "packages"), {
-            barcodeValue: this.item.barcodeValue,
-            statusHystory: [{
-              date: new Date().toISOString(),
-              status: "Packaging"
-            }],
-            statusCount: 1
-        });
+    setOrder(name, surname, address, province, city, phoneNumber, barcodeValue) {
+      this.item = {
+        name: name,
+        surname: surname,
+        address: address,
+        province: province,
+        city: city,
+        phoneNumber: phoneNumber,
+        barcodeValue: barcodeValue
+      };
     },
 
-    async findOrder(barcode) { //Mi trova l'ordine con il suo rispettivo codice a barre e che sia in Packaging
-        const q = query(collection(db, "packages"), 
-                        where("barcodeValue", "==", barcode),
-                        where("statusCount", "<=", 1));
+    async saveOrderOnDB() { //Mi salva l'ordine nel database
+      const orderRef = doc(collection(db, "packages"), this.item.barcodeValue)
+      const orderData = {
+        statusHystory: [{
+          date: new Date().toISOString(),
+          status: "Packaging"
+        }],
+        statusCount: 1,
+        name: this.item.name,
+        surname: this.item.surname,
+        address: this.item.address,
+        province: this.item.province,
+        city: this.item.city,
+        phoneNumber: this.item.phoneNumber
+      }
 
-        try {
-            const querySnapshot = await getDocs(q);
-        
-            if (querySnapshot.empty) {
-                window.alert("Prodotto non inseribile:", barcode);
-                return false
-            } else {
-                // Itera sui documenti trovati e restituisci il risultato
-                querySnapshot.forEach((doc) => {
-                    const product = doc.data();
-
-                    // ✅ Aggiorna correttamente l'oggetto item
-                    this.item = { ...product };
-                });
-                return true
-            }
-        } catch (error) {
-            console.error("Errore durante la ricerca del prodotto:", error);
-            return false
-        }
+      await setDoc(orderRef, orderData)
     },
 
     // Verifica se tutti i campi sono stati riempiti
