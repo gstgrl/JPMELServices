@@ -9,6 +9,7 @@
     import { useOrder } from '@/stores/order';
     import { useAuthStore } from '@/stores/auth';
     import { useDeviceStore } from '@/stores/diveceStore';
+    import { useCameraStore } from '@/stores/cameraStore';
 
 
     const generatedQRCODE = ref(false)
@@ -18,7 +19,8 @@
     const order = useOrder()
     const authStore = useAuthStore()
     const deviceStore = useDeviceStore()
-
+    const cameraStore = useCameraStore()
+    
     const barcodeTakenByForm = ref("")
     const refreshKey = ref(0)
 
@@ -55,7 +57,7 @@
     <div class="container" v-if="!generatedQRCODE">
         <div class="input-group my-3">
             <input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" aria-describedby="basic-addon1" v-model="barcodeTakenByForm" @keyup.enter="addOrderInPallet">
-            <scanner></scanner>
+            <scanner v-if="deviceStore.isMobile"></scanner>
         </div>
 
         <p v-if="cameraStore.scannedCode">
