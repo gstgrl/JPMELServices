@@ -6,6 +6,7 @@ export const useCameraStore = defineStore('camera', () => {
   const isCameraActive = ref(false);
   const scannedCode = ref(null);
   const permissionGranted = ref(false);
+  const beepSound = new Audio('/suoni/beep.mp3');
 
   const palletStore = usePalletStore()
   let scanner = null;
@@ -29,21 +30,27 @@ export const useCameraStore = defineStore('camera', () => {
       await checkPermissions()
       return;
     }
-
-    isCameraActive.value = true;
+    
     scanner = new Html5Qrcode("scanner-container");
 
-    scanner.start(
-      { facingMode: "environment" }, 
-      { fps: 10, qrbox: 250 }, 
-      (decodedText) => {
-        scannedCode.value = decodedText
-        stopScanner(); // Ferma dopo la prima scansione
-      },
-      (errorMessage) => {
-        console.warn("Errore scanner:", errorMessage);
-      }  
-    );
+    try {
+      // Avvia la fotocamera
+      await scannerInstance.start(
+        { facingMode: "environment" }, // Usa la fotocamera posteriore
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          scannedCode.value = decodedText; // Salva il codice scansionato
+          stopCamera(); // Ferma la scansione dopo una lettura
+        },
+        (errorMessage) => {
+          console.log(errorMessage); // Gestisci eventuali errori
+        }
+      );
+      isCameraActive.value = true;
+    } catch (error) {
+      console.error("Errore nell'avvio della fotocamera", error);
+      isCameraActive.value = false;
+    }
   };
 
   // 🔹 Ferma lo scanner
