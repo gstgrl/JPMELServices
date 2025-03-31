@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { usePalletStore } from './palletStore';
 import { ref } from 'vue';
-import { Html5QrcodeScanner } from "html5-qrcode";
 
 export const useCameraStore = defineStore('camera', () => {
   const isCameraActive = ref(false);
@@ -24,24 +23,26 @@ export const useCameraStore = defineStore('camera', () => {
 
   // 🔹 Avvia lo scanner solo se i permessi sono concessi
   const startScanner = async () => {
+    const { Html5Qrcode } = await import("html5-qrcode");
+
     if (!permissionGranted.value) {
       await checkPermissions()
       return;
     }
 
     isCameraActive.value = true;
-    scanner = new Html5QrcodeScanner("scanner-container");
+    scanner = new Html5Qrcode("scanner-container");
 
     scanner.start(
-      { facingMode: "environment" }, // Usa la fotocamera posteriore
-      { fps: 10, qrbox: 250 },
-      async (decodedText) => {
-        scannedCode.value = decodedText; // Salva il codice nel Pinia
-        stopScanner(); // Ferma lo scanner dopo una scansione
+      { facingMode: "environment" }, 
+      { fps: 10, qrbox: 250 }, 
+      (decodedText) => {
+        scannedCode.value = decodedText
+        stopScanner(); // Ferma dopo la prima scansione
       },
       (errorMessage) => {
-        console.log(errorMessage); // Puoi gestire errori qui
-      }
+        console.warn("Errore scanner:", errorMessage);
+      }  
     );
   };
 
