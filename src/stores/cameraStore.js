@@ -28,26 +28,16 @@ export const useCameraStore = defineStore('camera', () => {
       return;
     }
 
-    scanner = new Html5Qrcode("scanner-container");
+    scanner = new Html5Qrcode("scanner-container", {
+      fps: 10, qrbox: 250
+    });
 
-    try {
-      // Avvia la fotocamera
-      await scannerInstance.start(
-        { facingMode: "environment" }, // Usa la fotocamera posteriore
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          scannedCode.value = decodedText; // Salva il codice scansionato
-          stopCamera(); // Ferma la scansione dopo una lettura
-        },
-        (errorMessage) => {
-          console.log(errorMessage); // Gestisci eventuali errori
-        }
-      );
-      isCameraActive.value = true;
-    } catch (error) {
-      console.error("Errore nell'avvio della fotocamera", error);
-      isCameraActive.value = false;
-    }
+    scanner.render((decodedText) => {
+      scannedCode.value = decodedText; // Salva il codice scansionato
+      stopCamera(); // Ferma la scansione dopo una lettura
+    })
+    
+    isCameraActive.value = true;
   };
 
   // 🔹 Ferma lo scanner

@@ -57,7 +57,7 @@
             <scanner v-if="deviceStore.isMobile"></scanner>
         </div>
 
-        <div id="scanner-container"></div>
+        <div id="scanner-container" style="width: 100%; height: 400px;"></div>
 
         <p v-if="cameraStore.scannedCode">
             📌 Codice Scansionato: <strong>{{ cameraStore.scannedCode }}</strong>
