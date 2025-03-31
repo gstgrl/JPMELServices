@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 export const useCameraStore = defineStore('camera', () => {
   const isCameraActive = ref(false);
   const scannedCode = ref(null);
   const permissionGranted = ref(false);
-  //const beepSound = new Audio('/suoni/beep.mp3');
   let scanner = null;
 
   // 🔹 Controllo permessi fotocamera
@@ -21,23 +21,24 @@ export const useCameraStore = defineStore('camera', () => {
 
   // 🔹 Avvia lo scanner solo se i permessi sono concessi
   const startScanner = async () => {
-    const { Html5Qrcode } = await import("html5-qrcode");
-
+    await checkPermissions();
     if (!permissionGranted.value) {
-      await checkPermissions()
+      alert("Permessi fotocamera negati. Attiva l'accesso dalle impostazioni del browser.");
       return;
     }
 
-    scanner = new Html5Qrcode("scanner-container", {
-      fps: 10, qrbox: 250
-    });
-
-    scanner.render((decodedText) => {
-      scannedCode.value = decodedText; // Salva il codice scansionato
-      stopCamera(); // Ferma la scansione dopo una lettura
-    })
-    
     isCameraActive.value = true;
+    scanner = new Html5QrcodeScanner("scanner-container", { fps: 10, qrbox: 250 });
+
+    scanner.render(
+      async (decodedText) => {
+        scannedCode.value = decodedText;
+        stopScanner(); // Ferma lo scanner dopo la scansione
+      },
+      (errorMessage) => {
+        console.warn("Errore scansione:", errorMessage);
+      }
+    );
   };
 
   // 🔹 Ferma lo scanner
