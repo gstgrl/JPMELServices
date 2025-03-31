@@ -43,7 +43,6 @@
 
     watch(() => cameraStore.scannedCode, async (newCode) => {
         if (newCode) {
-            scannedCode.value = newCode;
             await palletStore.findOrder(newCode);
         }
     });
