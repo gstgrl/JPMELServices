@@ -37,18 +37,21 @@ export const useOrder = defineStore('orderStore', {
             statusHystory: [{
               date: new Date().toISOString(),
               status: "Packaging"
-            }]
+            }],
+            statusCount: 1
         });
     },
 
-    async findOrder(barcode) { //Mi trova l'ordine con il suo rispettivo codice a barre
-        const q = query(collection(db, "packages"), where("barcodeValue", "==", barcode));
+    async findOrder(barcode) { //Mi trova l'ordine con il suo rispettivo codice a barre e che sia in Packaging
+        const q = query(collection(db, "packages"), 
+                        where("barcodeValue", "==", barcode),
+                        where("statusCount", "<=", 1));
 
         try {
             const querySnapshot = await getDocs(q);
         
             if (querySnapshot.empty) {
-                window.alert("Nessun prodotto trovato con il codice a barre:", barcode);
+                window.alert("Prodotto non inseribile:", barcode);
                 return false
             } else {
                 // Itera sui documenti trovati e restituisci il risultato

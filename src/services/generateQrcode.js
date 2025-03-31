@@ -1,4 +1,3 @@
-import { usePalletStore } from "@/stores/palletStore";
 import { v4 as uuidv4 } from 'uuid'; // Per generare un ID univoco
 import { db } from "@/services/firebase";
 import { collection, doc, setDoc } from 'firebase/firestore';
@@ -6,15 +5,15 @@ import QRCode from 'qrcode'; // Importa la libreria qrcode
 
 
 
-export const generateQRCodeAndSave = async (barcodes) => {
+export const generateQRCodeAndSave = async (barcodes, user) => {
     const uuidQricode = uuidv4()
 
     try {
         // Creazione di un oggetto con i dati del bancale e dei codici a barre
-        console.log(barcodes)
         const palletData = {
             barcodes: barcodes,
             createdAt: new Date().toISOString(),
+            createdBy: user.uid
         };
 
         // Salvataggio dei dati in Firebase

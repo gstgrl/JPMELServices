@@ -1,13 +1,23 @@
 <script setup>
     import { ref } from 'vue';
     import { useRouter } from "vue-router";
-    import { usePalletStore } from '@/stores/palletStore';
-    import { useOrder } from '@/stores/order';
     import { generateQRCodeAndSave } from '@/services/generateQrcode';
 
+    //Pinia Stores
+    import { usePalletStore } from '@/stores/palletStore';
+    import { useOrder } from '@/stores/order';
+    import { useAuthStore } from '@/stores/auth';
+    import { useDeviceStore } from '@/stores/diveceStore';
+
+
     const generatedQRCODE = ref(false)
+    
+    //Pinia stores
     const palletStore = usePalletStore()
     const order = useOrder()
+    const authStore = useAuthStore()
+    const deviceStore = useDeviceStore()
+
     const barcodeTakenByForm = ref("")
     const refreshKey = ref(0)
 
@@ -29,7 +39,7 @@
 
     const close = async() => {
         await palletStore.closePallet()
-        generateQRCodeAndSave(palletStore.barcodes)
+        generateQRCodeAndSave(palletStore.barcodes, authStore.user)
         generatedQRCODE.value = true
         palletStore.resetPallet()
         router.push("/dashboard")
@@ -44,7 +54,7 @@
     <div class="container" v-if="!generatedQRCODE">
         <div class="input-group my-3">
             <input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" aria-describedby="basic-addon1" v-model="barcodeTakenByForm" @keyup.enter="addOrderInPallet">
-            <span class="input-group-text" id="basic-addon1"><button class="btn btn-light border-0"><font-awesome-icon :icon="['fas', 'camera']" /></button></span>
+            <span class="input-group-text" id="basic-addon1" v-if="deviceStore.isMobile"><button class="btn btn-light border-0"><font-awesome-icon :icon="['fas', 'camera']" /></button></span>
         </div>
 
         <div v-if="palletStore.pallet.length != 0" class="orders"  :key="refreshKey">
