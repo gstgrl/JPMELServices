@@ -31,7 +31,7 @@ export const useCameraStore = defineStore('camera', () => {
     scanner = new Html5QrcodeScanner("scanner-container", { fps: 10, qrbox: 250 });
 
     scanner.render(
-      (decodedText) => {
+      async (decodedText) => {
         scannedCode.value = decodedText;
         stopScanner(); // Ferma lo scanner dopo la scansione
       },

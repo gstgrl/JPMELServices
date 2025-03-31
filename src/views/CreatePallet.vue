@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import { useRouter } from "vue-router";
     import { generateQRCodeAndSave } from '@/services/generateQrcode';
+    import scanner from '@/components/scanner.vue';
 
     //Pinia Stores
     import { usePalletStore } from '@/stores/palletStore';
@@ -54,8 +55,12 @@
     <div class="container" v-if="!generatedQRCODE">
         <div class="input-group my-3">
             <input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" aria-describedby="basic-addon1" v-model="barcodeTakenByForm" @keyup.enter="addOrderInPallet">
-            <span class="input-group-text" id="basic-addon1" v-if="deviceStore.isMobile"><button class="btn btn-light border-0"><font-awesome-icon :icon="['fas', 'camera']" /></button></span>
+            <scanner></scanner>
         </div>
+
+        <p v-if="cameraStore.scannedCode">
+            📌 Codice Scansionato: <strong>{{ cameraStore.scannedCode }}</strong>
+        </p>
 
         <div v-if="palletStore.pallet.length != 0" class="orders"  :key="refreshKey">
 
