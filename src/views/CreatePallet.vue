@@ -60,6 +60,8 @@
             <scanner v-if="deviceStore.isMobile"></scanner>
         </div>
 
+        <div v-if="cameraStore.isCameraActive" id="scanner-container"></div>
+
         <p v-if="cameraStore.scannedCode">
             📌 Codice Scansionato: <strong>{{ cameraStore.scannedCode }}</strong>
         </p>
