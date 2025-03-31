@@ -2,10 +2,9 @@ import JsBarcode from "jsbarcode";
 import jsPDF from "jspdf";
 import { useOrder } from "@/stores/order";
 
-const orderStore = useOrder()
-
 export const generateLabelPDF = () => {
     const canvas = document.createElement("canvas");
+    const orderStore = useOrder()
     const doc = new jsPDF();
 
     JsBarcode(canvas, orderStore.item.barcodeValue, { format: "CODE128" });
