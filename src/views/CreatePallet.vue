@@ -59,10 +59,6 @@
 
         <div id="scanner-container"></div>
 
-        <p v-if="cameraStore.scannedCode">
-            📌 Codice Scansionato: <strong>{{ cameraStore.scannedCode }}</strong>
-        </p>
-
         <div v-if="palletStore.pallet.length != 0" class="orders"  :key="refreshKey">
 
             <div class="order" v-for="(orderOnPallet, index) in palletStore.pallet">

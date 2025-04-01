@@ -4,10 +4,12 @@
     import { useAuthStore } from "@/stores/auth";
     import { usePalletStore } from "@/stores/palletStore";
     import { useOrder } from "@/stores/order";
+    import { useDeviceStore } from "@/stores/diveceStore";
 
     const authStore = useAuthStore();
     const palletStore = usePalletStore();
     const orderStore = useOrder();
+    const deviceStore = useDeviceStore()
 
     onMounted(() => {
         // Verifica se l'utente è loggato all'inizio
@@ -42,7 +44,7 @@
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <ul class="navbar-nav bottom-bar">
+                    <ul class="navbar-nav bottom-bar" v-if="!deviceStore.isMobile">
 
                         <li class="nav-item">
                             <RouterLink to="/generateLabel" class="nav-link"><h6>NUOVO ORDINE</h6></RouterLink>
@@ -50,6 +52,24 @@
 
                         <li class="nav-item">
                             <RouterLink to="/createPallet" class="nav-link"><h6>NUOVO BANCALE</h6></RouterLink>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">OPERAZIONI TECNICHE</a>
+                            <ul class="dropdown-menu">
+                                <li><RouterLink to="/createUser" class="nav-link">Creazione utente</RouterLink></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav bottom-bar" v-else>
+
+                        <li class="nav-item">
+                            <RouterLink to="/generateLabel" class="nav-link"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl"/></RouterLink>
+                        </li>
+
+                        <li class="nav-item">
+                            <RouterLink to="/createPallet" class="nav-link"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl"/></RouterLink>
                         </li>
 
                         <li class="nav-item dropdown">
