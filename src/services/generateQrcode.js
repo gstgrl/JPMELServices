@@ -13,7 +13,8 @@ export const generateQRCodeAndSave = async (barcodes, user) => {
         const palletData = {
             barcodes: barcodes,
             createdAt: new Date().toISOString(),
-            createdBy: user.uid
+            createdBy: user.uid,
+            statusCount: 1
         };
 
         // Salvataggio dei dati in Firebase

@@ -5,7 +5,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // Importa alcune icone che vuoi usare
-import { faCamera, faXmark, faPallet, faBox  } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faXmark, faPallet, faBox, faGear, faWarehouse, faTrash, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 import App from "./App.vue";
 import router from "./router";
@@ -16,7 +16,7 @@ import "bootstrap";
 
 
 // Aggiungi le icone alla libreria globale
-library.add(faCamera, faPallet, faXmark, faBox);
+library.add(faCamera, faPallet, faXmark, faBox, faGear, faWarehouse, faTrash, faCheckCircle);
 
 const app = createApp(App);
 

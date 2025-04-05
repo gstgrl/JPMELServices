@@ -1,13 +1,11 @@
 import JsBarcode from "jsbarcode";
 import jsPDF from "jspdf";
-import { useOrder } from "@/stores/order";
 
-export const generateLabelPDF = () => {
+export const generatePDFLabel = (barcode, orderData) => {
     const canvas = document.createElement("canvas");
-    const orderStore = useOrder()
     const doc = new jsPDF();
 
-    JsBarcode(canvas, orderStore.item.barcodeValue, { format: "CODE128" });
+    JsBarcode(canvas, barcode, { format: "CODE128" });
   
     // Ottieni l'immagine base64 del codice a barre
     const barcodeImage = canvas.toDataURL("image/png");
@@ -18,11 +16,11 @@ export const generateLabelPDF = () => {
 
     // Aggiungi il contenuto del PDF (esempio)
     doc.setFontSize(16);
-    doc.text("RECIBE: " + orderStore.item.name + " " + orderStore.item.surname, 20, 30);
-    doc.text("DIRECCION: " + orderStore.item.address, 20, 40);
-    doc.text("PROVINCIA: " + orderStore.item.province, 20, 50);
-    doc.text("CIUDAD: " + orderStore.item.city, 20, 60);
-    doc.text("TELEFONO: " + orderStore.item.phoneNumber, 20, 70);
+    doc.text("RECIBE: " + orderData.name + " " + orderData.surname, 20, 30);
+    doc.text("DIRECCION: " + orderData.address, 20, 40);
+    doc.text("PROVINCIA: " + orderData.province, 20, 50);
+    doc.text("CIUDAD: " +orderData.city, 20, 60);
+    doc.text("TELEFONO: " + orderData.phoneNumber, 20, 70);
     doc.addImage(barcodeImage, "PNG", 100, 30, 100, 20);
 
     // Modifica altre caratteristiche come il bordo o la disposizione
@@ -30,5 +28,5 @@ export const generateLabelPDF = () => {
     doc.rect(5, 5, 200, 287); // Aggiungi un bordo attorno al documento
 
     // Salva il PDF
-    doc.save(`${orderStore.item.barcodeValue}.pdf`);
+    doc.save(`${barcode}.pdf`);
 }

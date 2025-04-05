@@ -2,19 +2,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/auth";
 import { watch } from 'vue';
 
-import CreateUser from '@/views/CreateUser.vue';
+
 import LoginView from '@/views/LoginView.vue';
-import CreatePallet from '@/views/CreatePallet.vue';
+
 import Dashboard from '@/views/Dashboard.vue';
-import GenerateLabel from '@/views/GenerateLabel.vue';
+import CreateUser from '@/views/CreateUser.vue';
+import OrderCreationView from '@/views/OrderCreationView.vue';
+import PalletClosureView from '@/views/PalletClosureView.vue';
+import WareHouseView from '@/views/WareHouseView.vue';
 
 
 const routes = [
   {path: '/login', component: LoginView},
   {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true}},
   {path: "/createUser", component: CreateUser, meta: { requiresAuth: true}},
-  {path: "/createPallet", component: CreatePallet, meta: { requiresAuth: true}},
-  {path: "/generateLabel", component: GenerateLabel, meta: { requiresAuth: true}},
+  {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true}},
+  {path: "/closePallet", component: PalletClosureView, meta: { requiresAuth: true}},
+  {path: "/warehouse", component: WareHouseView, meta: { requiresAuth: true}},
 ];
 
 const router = createRouter({

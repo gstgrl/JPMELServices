@@ -2,14 +2,13 @@
     import { RouterLink, useRouter } from "vue-router";
     import { onMounted } from "vue";
     import { useAuthStore } from "@/stores/auth";
-    import { usePalletStore } from "@/stores/palletStore";
-    import { useOrder } from "@/stores/order";
+    import { useOrderStore } from "@/stores/orderStore";
     import { useDeviceStore } from "@/stores/diveceStore";
 
     const authStore = useAuthStore();
-    const palletStore = usePalletStore();
-    const orderStore = useOrder();
+    const orderStore = useOrderStore()
     const deviceStore = useDeviceStore()
+    const router = useRouter();
 
     onMounted(() => {
         // Verifica se l'utente è loggato all'inizio
@@ -19,12 +18,9 @@
     // Funzione per il logout
     const logout = async () => {
         await authStore.logout()
-        palletStore.resetPallet()
         orderStore.resetOrder()
         router.push('/login');
     }
-
-    const router = useRouter();
 </script>
 
 <template>
@@ -47,11 +43,15 @@
                     <ul class="navbar-nav bottom-bar" v-if="!deviceStore.isMobile">
 
                         <li class="nav-item">
-                            <RouterLink to="/generateLabel" class="nav-link"><h6>NUOVO ORDINE</h6></RouterLink>
+                            <RouterLink to="/newOrder" class="nav-link"><h6>NUOVO ORDINE</h6></RouterLink>
                         </li>
 
                         <li class="nav-item">
-                            <RouterLink to="/createPallet" class="nav-link"><h6>NUOVO BANCALE</h6></RouterLink>
+                            <RouterLink to="/closePallet" class="nav-link"><h6>NUOVO BANCALE</h6></RouterLink>
+                        </li>
+
+                        <li class="nav-item">
+                            <RouterLink to="/warehouse" class="nav-link"><h6>MAGAZZINO</h6></RouterLink>
                         </li>
 
                         <li class="nav-item dropdown">
@@ -65,15 +65,19 @@
                     <ul class="navbar-nav bottom-bar" v-else>
 
                         <li class="nav-item">
-                            <RouterLink to="/generateLabel" class="nav-link"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl"/></RouterLink>
+                            <RouterLink to="/newOrder" class="nav-link"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl"/></RouterLink>
                         </li>
 
                         <li class="nav-item">
-                            <RouterLink to="/createPallet" class="nav-link"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl"/></RouterLink>
+                            <RouterLink to="/closePallet" class="nav-link"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl"/></RouterLink>
+                        </li>
+
+                        <li class="nav-item">
+                            <RouterLink to="/scanArrivedPallet" class="nav-link"><font-awesome-icon :icon="['fas', 'warehouse']"/></RouterLink>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">OPERAZIONI TECNICHE</a>
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><font-awesome-icon :icon="['fas', 'gear']" /></a>
                             <ul class="dropdown-menu">
                                 <li><RouterLink to="/createUser" class="nav-link">Creazione utente</RouterLink></li>
                             </ul>

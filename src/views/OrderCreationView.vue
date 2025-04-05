@@ -1,38 +1,54 @@
 <script setup>
     import { ref, nextTick, computed } from "vue";
-    import { generateAndSaveBarcode } from "@/services/barcodeService";
-    import { generateLabelPDF } from "@/services/generatePDF"
-    import { usePalletStore } from "@/stores/palletStore";
-    import { useOrder } from "@/stores/order";
+
+    import { useOrderStore } from "@/stores/orderStore";
+    import { usePalletStore } from "@/stores/outBoundPalletStore";
+    import { generateNumericBarcode } from "@/services/generateBarcode";
+    import JsBarcode from 'jsbarcode';
+
 
     const generatedBarcode = ref(false)
+    const barcode = ref("")
+    const currentOrder = ref({
+        name: "",
+        surname: "",
+        address: "",
+        province: "",
+        city: "",
+        phoneNumber: ""
+    })
+
     const palletStore = usePalletStore()
-    const order = useOrder()
-
-    const saveOrder = () => {
-        palletStore.addOrder(order.item)
-        order.saveOrderOnDB()
-        generateLabelPDF()
-
-        generatedBarcode.value = false
-        order.resetOrder()
-    };
+    const orderStore = useOrderStore()
 
     const generateBarcode = async() => {
-        order.item.barcodeValue = await generateAndSaveBarcode(); // Genera e salva il codice
+        barcode.value = generateNumericBarcode(); // Genera e salva il codice
         generatedBarcode.value = true
 
         await nextTick();
 
-        JsBarcode("#barcode", order.item.barcodeValue, {
+        JsBarcode("#barcode", barcode.value, {
             format: "CODE128",
             displayValue: true,
         });
     }
 
+    const saveOrder = () => {
+        palletStore.addOrder(barcode.value, null, currentOrder.value)
+        orderStore.addOrder(barcode.value, currentOrder.value)
+        //generatePDFLabel(barcode.value, currentOrder.value)
+        resetOrder()
+    };
+
     const isFormValid = computed(() => {
-        return order.isOrderValid(); // Verifica che tutti i campi siano validi
+        return Object.values(currentOrder.value).every(value => value !== '');
     });
+
+    const resetOrder = () => {
+        Object.keys(currentOrder.value).forEach(key => {
+            currentOrder.value[key] = ''; // Imposta ogni valore a stringa vuota
+        });
+    };
 </script>
 
 <template>
@@ -49,14 +65,14 @@
                     <input
                         type="text"
                         class="form-control m-1"
-                        v-model="order.item.name"
+                        v-model="currentOrder.name"
                         placeholder="Nome"
                         required
                     />
                     <input
                         type="text"
                         class="form-control m-1"
-                        v-model="order.item.surname"
+                        v-model="currentOrder.surname"
                         placeholder="Cognome"
                         required
                     />
@@ -68,7 +84,7 @@
                 <input
                     type="text"
                     class="form-control"
-                    v-model="order.item.address"
+                    v-model="currentOrder.address"
                     required
                 />
             </div>
@@ -78,7 +94,7 @@
                 <input
                     type="text"
                     class="form-control"
-                    v-model="order.item.province"
+                    v-model="currentOrder.province"
                     required
                 />
             </div>
@@ -88,7 +104,7 @@
                 <input
                     type="text"
                     class="form-control"
-                    v-model="order.item.city"
+                    v-model="currentOrder.city"
                     required
                 />
             </div>
@@ -98,7 +114,7 @@
                 <input
                     type="phone"
                     class="form-control"
-                    v-model="order.item.phoneNumber"
+                    v-model="currentOrder.phoneNumber"
                     required
                 />
             </div>
