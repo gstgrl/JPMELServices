@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import { useRouter } from "vue-router";
     import scanner from '@/components/scanner.vue';
     import warehouseComponent from '@/components/warehouseComponent.vue';
@@ -25,7 +25,11 @@
         }
     });
 
-    console.log(warehouseStore.warehouseOrders)
+    onMounted(async() => {
+        if(!warehouseStore.alreadyCharged) {
+            await warehouseStore.feetchPalletDischarged()
+        }
+    })
 </script>
 
 <template>

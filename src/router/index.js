@@ -4,7 +4,6 @@ import { watch } from 'vue';
 
 
 import LoginView from '@/views/LoginView.vue';
-
 import Dashboard from '@/views/Dashboard.vue';
 import CreateUser from '@/views/CreateUser.vue';
 import OrderCreationView from '@/views/OrderCreationView.vue';

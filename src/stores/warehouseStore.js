@@ -1,16 +1,17 @@
 import { defineStore } from "pinia";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, where, query, getDocs, collection } from "firebase/firestore";
 
 import { db } from "@/services/firebase";
 import { useOrderStore } from "./orderStore";
 
 export const useWareHouseStore = defineStore("wareHouse", {
   state: () => ({
-    warehouseOrders: []
+    warehouseOrders: [],
+    alreadyCharged: false
   }),
   actions: {
     //Funzione che ritorna il documento da Firebase con il palletId corrispondente facendo un controllo sulla validità del palletStatus
-    //Utilizzata quando si scansiona un qr-code
+    //Utilizzata quando si scansiona un qr-code per immettere gli ordini nel magazzino 
     async dischargPalletById(palletId) {     
         try {
             const palletRef = doc(db, "pallets", palletId);
@@ -61,6 +62,54 @@ export const useWareHouseStore = defineStore("wareHouse", {
         }
     },
 
+    //Funzione che carica tutti i bancali gia scaricati nella pagina durante il primo login
+    async feetchPalletDischarged() {
+        try {
+            const palletRef = query( collection(db, "pallets"), where("palletStatus", "==", "Discharged"));
+            const palletDocs = await getDocs(palletRef); // Ottieni il documento
+        
+            if (!palletDocs.empty) {
+                const orderStore = useOrderStore();
+    
+                for (const doc of palletDocs.docs) {
+                    const data = doc.data();
+                    const palletId = doc.id;
+    
+                    const orders = await Promise.all(
+                        data.barcodes.map(async (barcode) => {
+                            const found = await orderStore.fetchOrderByBarcode(barcode, 3);
+                            if (found) {
+                                const order = { data: orderStore.order, barcode: barcode };
+                                orderStore.resetOrder();
+                                return order;
+                            }
+                            console.warn(`⚠️ Ordine non trovato per il barcode: ${barcode}`);
+                            return null;
+                        })
+                    );
+    
+                    const ordersFiltered = orders.filter(order => order !== null);
+    
+                    if (ordersFiltered.length > 0) {
+                        this.warehouseOrders.push({
+                            dischargedAt: new Date().toISOString(),
+                            orders: ordersFiltered,
+                            palletId: palletId
+                        });
+                    }
+                }
+
+                this.alreadyCharged = true
+            } else {
+                window.alert("Nessun bancale trovato!");
+                return false;
+            }
+        } catch (error) {
+            console.error("Errore nel recupero del documento:", error);
+            return false
+        }
+    },
+
     async updatePalletStatus(newStatus, palletRef) {
         try {
             await updateDoc(palletRef, {palletStatus: newStatus})
@@ -71,7 +120,8 @@ export const useWareHouseStore = defineStore("wareHouse", {
     },
 
     resetWarehouseStore() {
-        this.warehouseOrders = []
+        this.warehouseOrders = [],
+        this.alreadyCharged = false
     }
   },
   persist: true,

@@ -1,10 +1,20 @@
 <script setup>
+    import { ref } from 'vue';
+    import Popup from './Popup.vue';
+
+    import { useDeliveryPool } from '@/stores/deliveryPoolStore';
+
+    const deliveryPoolStore = useDeliveryPool();
+    const checkedOrders = ref({});
+    const popup = ref(null);
+
+
     const props = defineProps({
         item: {
             type: Object,
             required: true
         }
-    })
+    });
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString("it-IT", {
@@ -15,6 +25,18 @@
             minute: "2-digit"
         });
     };
+
+    const handleCheckboxChange = (barcode) => {
+        const isChecked = checkedOrders.value[barcode];
+        
+        if (isChecked) {
+            deliveryPoolStore.addOrderToPool(barcode);
+            popup.value?.showPopup('Ordine aggiunto con successo!');
+        } else {
+            deliveryPoolStore.removeOrderFromPool(barcode);
+            popup.value?.showPopup('Ordine rimosso con successo!');
+        }
+    }
 </script>
 
 <template>
@@ -26,7 +48,12 @@
             <ul class="order-list">
                 <li v-for="(order, index) in item.orders" :key="index" class="order-item">
                     <label class="order-label">
-                        <input type="checkbox" class="order-checkbox">
+                        <input 
+                            type="checkbox" 
+                            :id="`checkbox-${index}-${order.barcode}`"
+                            class="order-checkbox" 
+                            v-model="checkedOrders[order.barcode]" 
+                            @change="handleCheckboxChange(order.barcode)">
                         <span class="order-info">{{ index + 1 }} - {{ order.data.address }}, {{ order.data.city }}, {{ order.data.province }}</span>
                     </label>
 
@@ -34,6 +61,8 @@
                 </li>
             </ul>
         </div>
+
+        <Popup ref="popup" />
     </div>
 </template>
 

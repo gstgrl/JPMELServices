@@ -38,6 +38,7 @@
         orderStore.addOrder(barcode.value, currentOrder.value)
         //generatePDFLabel(barcode.value, currentOrder.value)
         resetOrder()
+        generatedBarcode.value = false
     };
 
     const isFormValid = computed(() => {

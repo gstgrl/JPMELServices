@@ -1,13 +1,20 @@
 <script setup>
     import { RouterLink, useRouter } from "vue-router";
     import { onMounted } from "vue";
+
+    //Pinia Stores
     import { useAuthStore } from "@/stores/auth";
     import { useOrderStore } from "@/stores/orderStore";
     import { useDeviceStore } from "@/stores/diveceStore";
+    import { useWareHouseStore } from "@/stores/warehouseStore";
+    import { useDeliveryPool } from "@/stores/deliveryPoolStore";
 
     const authStore = useAuthStore();
     const orderStore = useOrderStore()
     const deviceStore = useDeviceStore()
+    const warehouseStore = useWareHouseStore()
+    const deliveryPoolStore = useDeliveryPool()
+
     const router = useRouter();
 
     onMounted(() => {
@@ -18,7 +25,12 @@
     // Funzione per il logout
     const logout = async () => {
         await authStore.logout()
+        
         orderStore.resetOrder()
+        warehouseStore.resetWarehouseStore()
+        deliveryPoolStore.resetPool()
+
+
         router.push('/login');
     }
 </script>
