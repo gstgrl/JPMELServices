@@ -124,5 +124,4 @@ export const useWareHouseStore = defineStore("wareHouse", {
         this.alreadyCharged = false
     }
   },
-  persist: true,
 });

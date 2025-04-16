@@ -9,6 +9,7 @@ import CreateUser from '@/views/CreateUser.vue';
 import OrderCreationView from '@/views/OrderCreationView.vue';
 import PalletClosureView from '@/views/PalletClosureView.vue';
 import WareHouseView from '@/views/WareHouseView.vue';
+import OrderDeliveryManagmentView from '@/views/OrderDeliveryManagmentView.vue';
 
 
 const routes = [
@@ -18,6 +19,7 @@ const routes = [
   {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true}},
   {path: "/closePallet", component: PalletClosureView, meta: { requiresAuth: true}},
   {path: "/warehouse", component: WareHouseView, meta: { requiresAuth: true}},
+  {path: "/delivery", component: OrderDeliveryManagmentView, meta: { requiresAuth: true}},
 ];
 
 const router = createRouter({

@@ -55,33 +55,33 @@
 <template>
     <div class="container mt-5">
         <div class="title-barcode">
-            <h2>Genera etichetta</h2>
+            <h2>{{ $t('orderCreation.title') }}</h2>
             <svg v-if="generatedBarcode" id="barcode"></svg>
         </div>
 
         <form @submit.prevent="saveOrder">
             <div class="mb-3">
-                <label class="form-label">Destinatario</label>
+                <label class="form-label">{{ $t('orderCreation.receiver') }}</label>
                 <div class="name-surname-div">
                     <input
                         type="text"
                         class="form-control m-1"
                         v-model="currentOrder.name"
-                        placeholder="Nome"
+                        :placeholder="$t('orderCreation.placeholderNameReciver')"
                         required
                     />
                     <input
                         type="text"
                         class="form-control m-1"
                         v-model="currentOrder.surname"
-                        placeholder="Cognome"
+                        :placeholder="$t('orderCreation.placeholderSurnameReciver')"
                         required
                     />
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Indirizzo</label>
+                <label class="form-label">{{ $t('orderCreation.address') }}</label>
                 <input
                     type="text"
                     class="form-control"
@@ -91,7 +91,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Provincia</label>
+                <label class="form-label">{{ $t('orderCreation.province') }}</label>
                 <input
                     type="text"
                     class="form-control"
@@ -101,7 +101,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Città</label>
+                <label class="form-label">{{ $t('orderCreation.city') }}</label>
                 <input
                     type="text"
                     class="form-control"
@@ -111,7 +111,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Cellulare</label>
+                <label class="form-label">{{ $t('orderCreation.phoneNumber') }}</label>
                 <input
                     type="phone"
                     class="form-control"
@@ -120,8 +120,8 @@
                 />
             </div>
 
-            <button type="button" class="btn btn-light" @click="generateBarcode" :disabled="!isFormValid" v-if="!generatedBarcode">Genera Codice a Barre</button>
-            <button type="submit" v-if="generatedBarcode" class="btn btn-primary">Salva Ordine</button>
+            <button type="button" class="btn btn-light" @click="generateBarcode" :disabled="!isFormValid" v-if="!generatedBarcode">{{ $t('orderCreation.buttons.generateBarCode') }}</button>
+            <button type="submit" v-if="generatedBarcode" class="btn btn-primary">{{ $t('orderCreation.buttons.saveOrder') }}</button>
         </form>
     </div>
 </template>

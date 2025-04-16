@@ -4,5 +4,5 @@
 
 <template>
 
-
+    delivery manager view
 </template>

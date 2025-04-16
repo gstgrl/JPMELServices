@@ -1,6 +1,8 @@
 <script setup>
     import { RouterLink, useRouter } from "vue-router";
     import { onMounted } from "vue";
+    import offcanva from "./offcanva.vue";
+
 
     //Pinia Stores
     import { useAuthStore } from "@/stores/auth";
@@ -22,115 +24,96 @@
         authStore.checkAuth();
     });
 
-    // Funzione per il logout
-    const logout = async () => {
-        await authStore.logout()
-        
-        orderStore.resetOrder()
-        warehouseStore.resetWarehouseStore()
-        deliveryPoolStore.resetPool()
-
-
-        router.push('/login');
-    }
+    console.log(deliveryPoolStore.onDelivery)
 </script>
 
 <template>
+    <!-- Navbar principale -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <RouterLink class="navbar-brand" :to="authStore.isLoggedIn ? '/dashboard' : '/login'">JP MEL Services</RouterLink>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <button type="button" class="btn btn-danger collapse navbar-collapse" id="navbarNavAltMarkup" @click="logout"  v-if="authStore.isLoggedIn">Logout</button>
-        </div>
+      <div class="container-fluid">
+        <RouterLink class="navbar-brand" :to="authStore.isLoggedIn ? '/dashboard' : '/login'">
+          JP MEL Services
+        </RouterLink>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <!-- Toggler sempre visibile per aprire Offcanvas -->
+        <button class="btn btn-outline-light ms-auto me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu"  v-if="authStore.isLoggedIn">
+            <font-awesome-icon :icon="['fas', 'gear']" />
+        </button>
+      </div>
     </nav>
-
-    <nav class="navbar navbar-expand-lg bg-body-tertiary bottom-bar"  v-if="authStore.isLoggedIn">
-        <div class="container-fluid">
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <ul class="navbar-nav bottom-bar" v-if="!deviceStore.isMobile">
-
-                        <li class="nav-item">
-                            <RouterLink to="/newOrder" class="nav-link"><h6>NUOVO ORDINE</h6></RouterLink>
-                        </li>
-
-                        <li class="nav-item">
-                            <RouterLink to="/closePallet" class="nav-link"><h6>NUOVO BANCALE</h6></RouterLink>
-                        </li>
-
-                        <li class="nav-item">
-                            <RouterLink to="/warehouse" class="nav-link"><h6>MAGAZZINO</h6></RouterLink>
-                        </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">OPERAZIONI TECNICHE</a>
-                            <ul class="dropdown-menu">
-                                <li><RouterLink to="/createUser" class="nav-link">Creazione utente</RouterLink></li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <ul class="navbar-nav bottom-bar" v-else>
-
-                        <li class="nav-item">
-                            <RouterLink to="/newOrder" class="nav-link"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl"/></RouterLink>
-                        </li>
-
-                        <li class="nav-item">
-                            <RouterLink to="/closePallet" class="nav-link"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl"/></RouterLink>
-                        </li>
-
-                        <li class="nav-item">
-                            <RouterLink to="/scanArrivedPallet" class="nav-link"><font-awesome-icon :icon="['fas', 'warehouse']"/></RouterLink>
-                        </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><font-awesome-icon :icon="['fas', 'gear']" /></a>
-                            <ul class="dropdown-menu">
-                                <li><RouterLink to="/createUser" class="nav-link">Creazione utente</RouterLink></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+  
+    <!-- Navbar secondaria per utenti loggati -->
+    <nav v-if="authStore.isLoggedIn" class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <!-- Desktop view -->
+          <div class="navbar-nav unhidden-bottom-bar d-none d-lg-flex">
+            <div class="bottom-bar-links">
+              <RouterLink to="/newOrder" class="nav-link"><h6>{{ $t('navbar.newOrder') }}</h6></RouterLink>
+              <RouterLink to="/closePallet" class="nav-link"><h6>{{ $t('navbar.newPallet') }}</h6></RouterLink>
+              <RouterLink to="/warehouse" class="nav-link" v-if="!deliveryPoolStore.onDelivery"><h6>{{ $t('navbar.warehouse') }}</h6></RouterLink>
             </div>
+          </div>
+  
+          <!-- Mobile view -->
+          <div class="navbar-nav bottom-bar d-flex d-lg-none">
+            <div class="bottom-bar-links">
+              <RouterLink to="/newOrder" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl" /></RouterLink>
+              <RouterLink to="/closePallet" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl" /></RouterLink>
+              <RouterLink to="/warehouse" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'warehouse']" /></RouterLink>
+            </div>
+          </div>
         </div>
+      </div>
     </nav>
+  
+    <!-- Offcanvas component -->
+    <offcanva />
 </template>
 
 <style scoped>
-    .navbar {
-        display: flex;
-        flex-direction: column;
+    h6 {
+    margin-right: 0.8rem;
     }
 
-    .main-bar {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-        width: 100%;
+    .unhidden-bottom-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
     }
 
     .bottom-bar {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        height: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    }
+
+    .bottom-bar-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-grow: 1;
+    }
+
+    .nav-link-page {
+    padding: 0.5rem;
     }
 
     @media (min-width: 992px) {
-        .btn-danger {
-            flex-grow: 0;
-        }
+    .btn-danger {
+        margin-left: auto;
+    }
     }
 
     @media (max-width: 991px) {
-        .btn-danger {
-            margin-top: 0.5rem;
-        }
+    .btn-danger {
+        margin-top: 0.5rem;
+    }
     }
 </style>

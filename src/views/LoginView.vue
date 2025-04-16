@@ -22,7 +22,7 @@
 
 <template>
   <div class="container mt-5">
-    <h2>login</h2>
+    <h2>{{ $t('accessWords.login') }}</h2>
     <form @submit.prevent="login">
 
       <div class="mb-3">
@@ -45,7 +45,7 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Accedi</button>
+      <button type="submit" class="btn btn-primary">{{ $t('accessWords.login') }}</button>
     </form>
   </div>
 </template>

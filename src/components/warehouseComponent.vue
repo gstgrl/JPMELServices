@@ -37,14 +37,18 @@
             popup.value?.showPopup('Ordine rimosso con successo!');
         }
     }
+
+    const isChecked = (barcode) => {
+        return deliveryPoolStore.ordersPool.includes(barcode); // Verifica se l'ordine è selezionato
+    };
 </script>
 
 <template>
     <div class="order-container">
-        <h5 class="order-date">📅 Scaricato in data: {{ formatDate(item.dischargedAt) }}</h5>
+        <h5 class="order-date">📅 {{ $t('warehouse.unloadDate') }}: {{ formatDate(item.dischargedAt) }}</h5>
 
         <div class="order-card">
-            <h6 class="order-title">📦 Ordini presenti:</h6>
+            <h6 class="order-title">📦 {{ $t('warehouse.orderAvilable') }}:</h6>
             <ul class="order-list">
                 <li v-for="(order, index) in item.orders" :key="index" class="order-item">
                     <label class="order-label">
@@ -52,12 +56,13 @@
                             type="checkbox" 
                             :id="`checkbox-${index}-${order.barcode}`"
                             class="order-checkbox" 
+                            :checked="isChecked(order.barcode)"
                             v-model="checkedOrders[order.barcode]" 
                             @change="handleCheckboxChange(order.barcode)">
                         <span class="order-info">{{ index + 1 }} - {{ order.data.address }}, {{ order.data.city }}, {{ order.data.province }}</span>
                     </label>
 
-                    <p class="barcode-info">📄 Barcode: {{ order.barcode }}</p>
+                    <p class="barcode-info">📄 {{ $t('warehouse.barcodeText') }}: {{ order.barcode }}</p>
                 </li>
             </ul>
         </div>

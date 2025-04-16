@@ -57,7 +57,7 @@
         <input
           type="text"
           class="form-control"
-          placeholder="Scansiona o inserisci il Barcode"
+          :placeholder="$t('palletClosure.placholderInput')"
           v-model="barcodeValue"
           @keyup.enter="addOrder"
         />
@@ -96,7 +96,7 @@
         v-if="outBoundPallet.orders.length !== 0"
       >
         <font-awesome-icon :icon="['fas', 'check-circle']" />
-        Chiudi Bancale
+        {{ $t('palletClosure.closureButton') }}
       </button>
     </div>
 </template>

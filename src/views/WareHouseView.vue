@@ -1,6 +1,8 @@
 <script setup>
     import { onMounted, ref, watch } from 'vue';
     import { useRouter } from "vue-router";
+
+    //Vue components
     import scanner from '@/components/scanner.vue';
     import warehouseComponent from '@/components/warehouseComponent.vue';
 
@@ -8,12 +10,14 @@
     import { useWareHouseStore } from '@/stores/warehouseStore';
     import { useDeviceStore } from '@/stores/diveceStore';
     import { useCameraStore } from '@/stores/cameraStore';
+    import { useDeliveryPool } from '@/stores/deliveryPoolStore';
 
     
     //Pinia stores intialization
     const warehouseStore = useWareHouseStore()
     const deviceStore = useDeviceStore()
     const cameraStore = useCameraStore()
+    const deliveryPoolStore = useDeliveryPool()
     const router = useRouter();
     
     const palletIdValue = ref("")
@@ -30,6 +34,15 @@
             await warehouseStore.feetchPalletDischarged()
         }
     })
+
+    const startDeliverying = async() => {
+        let userResponse = window.confirm("Vuoi continuare")
+
+        if(userResponse) {
+            router.push('/delivery')
+            await deliveryPoolStore.startDeliverying()
+        }
+    }
 </script>
 
 <template>
@@ -40,6 +53,11 @@
         </div>
 
         <div id="scanner-container"></div>
+
+        <div v-if="deliveryPoolStore.orderNumber > 0">
+            <p>{{ $t('warehouse.selectedOrder') }}: {{ deliveryPoolStore.orderNumber }}</p>
+            <button type="button" class="btn btn-success" @click="startDeliverying">{{ $t('warehouse.buttons.deliveryButton') }}</button>
+        </div>
 
         <div v-if="warehouseStore.warehouseOrders.length != 0" class="warehouse-view container">
             <div v-for="(item, index) in warehouseStore.warehouseOrders">

@@ -23,7 +23,7 @@ export const useOrderStore = defineStore('orderStore', {
                     return true
                 }
             } else {
-                window.alert("Nessun documento trovato!");
+                console.error("Ordine non idoneo")
                 return false
             }
         } catch (error) {
