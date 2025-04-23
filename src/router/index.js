@@ -3,13 +3,13 @@ import { useAuthStore } from "@/stores/auth";
 import { watch } from 'vue';
 
 
-import LoginView from '@/views/LoginView.vue';
-import Dashboard from '@/views/Dashboard.vue';
-import CreateUser from '@/views/CreateUser.vue';
-import OrderCreationView from '@/views/OrderCreationView.vue';
-import PalletClosureView from '@/views/PalletClosureView.vue';
-import WareHouseView from '@/views/WareHouseView.vue';
-import OrderDeliveryManagmentView from '@/views/OrderDeliveryManagmentView.vue';
+import LoginView from '@/views/login/LoginView.vue';
+import Dashboard from '@/views/dashboard/Dashboard.vue';
+import CreateUser from '@/views/creating_user/CreateUser.vue';
+import OrderCreationView from '@/views/creating_order/OrderCreationView.vue';
+import PalletClosureView from '@/views/closure_pallet/PalletClosureView.vue';
+import WareHouseView from '@/views/warehouse/WareHouseView.vue';
+import OrderDeliveryManagmentView from '@/views/delivery_view/OrderDeliveryManagmentView.vue';
 
 
 const routes = [

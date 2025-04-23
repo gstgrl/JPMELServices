@@ -3,8 +3,8 @@
     import { useRouter } from "vue-router";
 
     //Vue components
-    import scanner from '@/components/scanner.vue';
-    import warehouseComponent from '@/components/warehouseComponent.vue';
+    import scanner from '@/components/ui/scanner.vue';
+    import warehouseComponent from '@/views/warehouse/warehouseComponent.vue';
 
     //Pinia Stores
     import { useWareHouseStore } from '@/stores/warehouseStore';

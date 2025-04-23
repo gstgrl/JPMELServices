@@ -1,8 +1,8 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { useRouter } from "vue-router";
-    import scanner from '@/components/scanner.vue';
-    import barcode from '@/components/barcode.vue';
+    import scanner from '@/components/ui/scanner.vue';
+    import barcode from '@/components/ui/barcode.vue';
 
     //Pinia Stores
     import { usePalletStore } from '@/stores/outBoundPalletStore';

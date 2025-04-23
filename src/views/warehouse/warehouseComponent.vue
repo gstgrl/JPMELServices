@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import Popup from './Popup.vue';
+    import Popup from '@/components/ui/Popup.vue';
 
     import { useDeliveryPool } from '@/stores/deliveryPoolStore';
 

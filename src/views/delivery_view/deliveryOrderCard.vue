@@ -1,7 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import Popup from '@/components/Popup.vue';
-    import badge from './micro/badge.vue';
+    import badge from './badge.vue';
     import { useDeliveryPool } from '@/stores/deliveryPoolStore';
 
     const props = defineProps({

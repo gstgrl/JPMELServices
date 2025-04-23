@@ -1,7 +1,7 @@
 <script setup>
-    import { ref, computed } from 'vue';
+    import { computed } from 'vue';
     import { useDeliveryPool } from '@/stores/deliveryPoolStore';
-    import deliveryOrderCard from '@/components/deliveryOrderCard.vue';
+    import deliveryOrderCard from '@/views/delivery_view/deliveryOrderCard.vue';
 
     const deliveryPoolStore = useDeliveryPool()
 

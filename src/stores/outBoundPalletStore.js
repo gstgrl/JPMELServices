@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
-import { updateDoc, setDoc, getDoc, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { useAuthStore } from '@/stores/auth';
 import { useOrderStore } from "./orderStore";
+import { updateOrder } from "@/services/updates";
 
 import { db } from "@/services/firebase";
 import { v4 as uuidv4 } from 'uuid'; // Per generare un ID univoco
@@ -15,7 +16,6 @@ export const usePalletStore = defineStore("outBoundPallet", {
   }),
   actions: {
     async closePallet() {
-        const orderStore = useOrderStore()
         const authStore = useAuthStore()
 
         try {
@@ -29,7 +29,7 @@ export const usePalletStore = defineStore("outBoundPallet", {
             })
 
             const updatePromises = this.barcodeOrdersInPallet.map(barcode => 
-                orderStore.updateStatusHistory(barcode, "Shipped By Sea", this.palletId, null, 1)
+                updateOrder(barcode, "Shipped by Sea", 1, this.palletId, null)
             );
 
             await Promise.all(updatePromises);

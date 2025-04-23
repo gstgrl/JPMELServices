@@ -1,7 +1,7 @@
 // src/stores/orderStore.js
 import { defineStore } from 'pinia';
 import { db } from "@/services/firebase";
-import { collection, getDoc, doc, increment, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { collection, getDoc, doc, setDoc } from "firebase/firestore";
 
 export const useOrderStore = defineStore('orderStore', {
   state: () => ({
@@ -29,28 +29,6 @@ export const useOrderStore = defineStore('orderStore', {
         } catch (error) {
             console.error("Errore nel recupero del documento:", error);
             return false
-        }
-    },
-
-    //Aggiorna lo stato dell'ordine aggiungendo un oggetto con data di modifica e nuovo stato nell'array statusHistory
-    async updateStatusHistory(barcode, newStatus = null, palletId = null, deliveryStatus = null, incrementRate = null) {
-        const orderRef = doc(db, "packages", barcode);
-        const newStatusEntry = { date: new Date().toISOString(), status: newStatus };
-        const updateData = {}
-
-        if(newStatus) {updateData.statusHistory = arrayUnion(newStatusEntry)}
-
-        if(incrementRate) {updateData.statusCount = increment(incrementRate)}
-
-        if(palletId) {updateData.palletId = palletId}
-
-        if(deliveryStatus) {updateData.deliveryStatus = deliveryStatus}
-
-        try {
-            await updateDoc(orderRef, updateData)
-            console.log("Documento aggiornato correttamente !")
-        } catch (error) {
-            console.error("Errore nell'aggiornamento dello stato dell'articolo: ", error)
         }
     },
 

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useOrderStore } from "./orderStore";
+import { updateOrder } from "@/services/updates";
 
 export const useDeliveryPool = defineStore("deliveryPoolStore", {
   state: () => ({
@@ -30,7 +31,7 @@ export const useDeliveryPool = defineStore("deliveryPoolStore", {
       
           if (found) {
             const order = { data: orderStore.order, barcode };
-            await orderStore.updateStatusHistory(barcode, "In delivery", null, null, 1);
+            await updateOrder(barcode, 'In delivery', 1, null, null)
             orderStore.resetOrder();
             this.ordersPoolItem.push(order);
 
@@ -46,23 +47,22 @@ export const useDeliveryPool = defineStore("deliveryPoolStore", {
       this.orderNumber = 0
     },
 
-    async updateBadgeStatusOrder(order, deliveryStatus, incrementRate, newStatus) {
-      const orderStore = useOrderStore()
+    async updateBadgeStatusOrder(order, newStatus, incrementRate, deliveryStatus) {
 
       const index = this.ordersPoolItem.findIndex(item => item.barcode === order.barcode)
 
       if(index != -1) {
         this.ordersPoolItem[index].data.deliveryStatus = deliveryStatus
-        await orderStore.updateStatusHistory(order.barcode, newStatus, null, deliveryStatus, incrementRate)
+        await updateOrder(order.barcode, newStatus, incrementRate, null, deliveryStatus)
       }
     },
 
     orderDeliveredFunction(order) {
-      this.updateBadgeStatusOrder(order, 'delivered', 1, "Delivered")
+      this.updateBadgeStatusOrder(order, "Delivered", 1, 'delivered')
     },
 
     orderRescheduled(order) {
-      this.updateBadgeStatusOrder(order, 'rescheduled', -1, 'Rescheduled')
+      this.updateBadgeStatusOrder(order, 'Rescheduled', -1, 'rescheduled')
     },
 
     resetPool() {

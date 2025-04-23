@@ -3,6 +3,7 @@ import { getDoc, doc, updateDoc, where, query, getDocs, collection } from "fireb
 
 import { db } from "@/services/firebase";
 import { useOrderStore } from "./orderStore";
+import { updateOrder } from "@/services/updates";
 
 export const useWareHouseStore = defineStore("wareHouse", {
   state: () => ({
@@ -29,8 +30,8 @@ export const useWareHouseStore = defineStore("wareHouse", {
                             
                             if (found) {
                                 const order = {data: orderStore.order, barcode: barcode} //Effettuo una copia dell'ordine estratto dal DB prima di resettare il pinia Store
-                                await orderStore.updateStatusHistory(barcode, "Arrived in the Dominican Republic", null, 'pending', 1);
-                                orderStore.resetOrder()
+                                updateOrder(barcode, "Arrived in the Dominican Republic", 1, null, 'pending');
+                                orderStore.resetOrder();
                                 return order; // Copia indipendente dei dati
                             }
 
@@ -100,6 +101,7 @@ export const useWareHouseStore = defineStore("wareHouse", {
                 }
 
                 this.alreadyCharged = true
+                
             } else {
                 window.alert("Nessun bancale trovato!");
                 return false;

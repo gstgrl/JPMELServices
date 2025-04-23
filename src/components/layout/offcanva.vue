@@ -1,18 +1,16 @@
 <script setup>
     import { useRouter } from "vue-router";
-    import languageSwitch from "./languageSwitch.vue";
+    import languageSwitch from "../ui/languageSwitch.vue";
 
 
     //Pinia Stores
     import { useAuthStore } from "@/stores/auth";
     import { useOrderStore } from "@/stores/orderStore";
-    import { useDeviceStore } from "@/stores/diveceStore";
     import { useWareHouseStore } from "@/stores/warehouseStore";
     import { useDeliveryPool } from "@/stores/deliveryPoolStore";
 
     const authStore = useAuthStore();
     const orderStore = useOrderStore()
-    const deviceStore = useDeviceStore()
     const warehouseStore = useWareHouseStore()
     const deliveryPoolStore = useDeliveryPool()
 
