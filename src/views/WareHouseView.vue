@@ -40,7 +40,7 @@
 
         if(userResponse) {
             router.push('/delivery')
-            await deliveryPoolStore.startDeliverying()
+            await deliveryPoolStore.startDelivery()
         }
     }
 </script>

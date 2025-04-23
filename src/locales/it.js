@@ -23,6 +23,7 @@ export default {
     province: "Provincia",
     city: "Città",
     phoneNumber: "Cellulare",
+    sender: "Mittente",
     buttons: {
       generateBarCode: "Genera codice a barre",
       saveOrder: "Salva Ordine"
@@ -39,6 +40,22 @@ export default {
     barcodeText: "Codice a Barre",
     buttons: {
       deliveryButton: "Vai in Consegna"
+    }
+  },
+  delivery: {
+    titles: {
+      orderToDeliver: "Ordini da consegnare",
+      orderDelivered: "Ordini consegnati"
+    },
+    badgeStates: {
+      delivered: "Consegnato",
+      pending: "In attesa",
+      rescheduled: "Riprogrammato",
+      canceled: "Annullata"
+    },
+    buttons: {
+      signatureButton: "Firma per consegna",
+      rescheduleButton: "Riprogramma consegna"
     }
   }
 }

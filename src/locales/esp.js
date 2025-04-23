@@ -23,6 +23,7 @@ export default {
     province: "Provincia",
     city: "Ciudad",
     phoneNumber: "Teléfono móvil",
+    sender: "Remitente",
     buttons: {
       generateBarCode: "Generar Código de Barras",
       saveOrder: "Guardar Pedido"
@@ -39,6 +40,18 @@ export default {
     barcodeText: "Código de Barras",
     buttons: {
       deliveryButton: "Ir a Entrega"
+    }
+  },
+  delivery: {
+    badgeStates: {
+      delivered: "Entregado",
+      pending: "Pendiente",
+      rescheduled: "Reprogramado",
+      canceled: "Fallido"
+    },
+    buttons: {
+      signatureButton: "Firmar para entrega",
+      rescheduleButton: "Reprogramar entrega"
     }
   }
 }

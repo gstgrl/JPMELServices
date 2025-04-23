@@ -29,7 +29,7 @@ export const usePalletStore = defineStore("outBoundPallet", {
             })
 
             const updatePromises = this.barcodeOrdersInPallet.map(barcode => 
-                orderStore.updateStatusHistory(barcode, "Shipped By Sea", this.palletId)
+                orderStore.updateStatusHistory(barcode, "Shipped By Sea", this.palletId, null, 1)
             );
 
             await Promise.all(updatePromises);

@@ -3,9 +3,12 @@ import { useOrderStore } from "./orderStore";
 
 export const useDeliveryPool = defineStore("deliveryPoolStore", {
   state: () => ({
-    ordersPool: [],
+    ordersPool: [], //Array di barcodes, indica quali ordini sono presenti per la consegna
     orderNumber: 0,
-    onDelivery: false
+
+    //Fase di consegna
+    onDelivery: false, 
+    ordersPoolItem: []
   }),
   actions: {
     addOrderToPool(barcode) {
@@ -18,34 +21,55 @@ export const useDeliveryPool = defineStore("deliveryPoolStore", {
       this.ordersPool = this.ordersPool.filter(item => item !== barcode);
     },
 
-    async startDeliverying() {
+    async startDelivery() {
       const orderStore = useOrderStore()
 
-      await Promise.all(
-        this.ordersPool.map(async (barcode) => {
-            try {
-              const found = await orderStore.fetchOrderByBarcode(barcode, 3);
-              if (found) {
-                await orderStore.updateStatusHistory(barcode, "On delivery", null);
+      for (const barcode of this.ordersPool) {
+        try {
+          const found = await orderStore.fetchOrderByBarcode(barcode, 3);
+      
+          if (found) {
+            const order = { data: orderStore.order, barcode };
+            await orderStore.updateStatusHistory(barcode, "In delivery", null, null, 1);
+            orderStore.resetOrder();
+            this.ordersPoolItem.push(order);
 
-              } else {
-                console.warn(`⚠️ Ordine non trovato per il barcode: ${barcode}`);
-              }
+          } else {
+            console.warn(`⚠️ Ordine non trovato per il barcode: ${barcode}`);
+          }
+        } catch (error) {
+          console.error(`❌ Errore durante il processo per ${barcode}:`, error);
+        }
+      }
 
-            } catch (error) {
-              console.error(`Errore nel recupero dell'ordine con barcode ${barcode}:`, error);
-            }
-        })
-      );
-
-      this.onDelivery = true
+      //this.onDelivery = true
       this.orderNumber = 0
+    },
+
+    async updateBadgeStatusOrder(order, deliveryStatus, incrementRate, newStatus) {
+      const orderStore = useOrderStore()
+
+      const index = this.ordersPoolItem.findIndex(item => item.barcode === order.barcode)
+
+      if(index != -1) {
+        this.ordersPoolItem[index].data.deliveryStatus = deliveryStatus
+        await orderStore.updateStatusHistory(order.barcode, newStatus, null, deliveryStatus, incrementRate)
+      }
+    },
+
+    orderDeliveredFunction(order) {
+      this.updateBadgeStatusOrder(order, 'delivered', 1, "Delivered")
+    },
+
+    orderRescheduled(order) {
+      this.updateBadgeStatusOrder(order, 'rescheduled', -1, 'Rescheduled')
     },
 
     resetPool() {
       this.ordersPool = [];
       this.orderNumber = 0;
-      this.onDelivery = false
+      this.onDelivery = false;
+      this.ordersPoolItem = [];
     }
   },
   persist: true

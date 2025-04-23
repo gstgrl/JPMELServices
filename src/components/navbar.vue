@@ -24,7 +24,6 @@
         authStore.checkAuth();
     });
 
-    console.log(deliveryPoolStore.onDelivery)
 </script>
 
 <template>
@@ -56,6 +55,7 @@
               <RouterLink to="/newOrder" class="nav-link"><h6>{{ $t('navbar.newOrder') }}</h6></RouterLink>
               <RouterLink to="/closePallet" class="nav-link"><h6>{{ $t('navbar.newPallet') }}</h6></RouterLink>
               <RouterLink to="/warehouse" class="nav-link" v-if="!deliveryPoolStore.onDelivery"><h6>{{ $t('navbar.warehouse') }}</h6></RouterLink>
+              <RouterLink to="/delivery" class="nav-link"><h6>DELIVERY MANAGER</h6></RouterLink>
             </div>
           </div>
   
