@@ -3,7 +3,7 @@ import { db } from "@/services/firebase";
 import { doc, increment, updateDoc, arrayUnion } from "firebase/firestore";
 
 
-export async function updateOrder(barcode, newStatus = null, incrementRate = null, palletId = null, deliveryStatus = null) {
+export async function updateOrder(barcode, newStatus = null, incrementRate = null, palletId = null, deliveryStatus = null, signature = null) {
     const orderRef = doc(db, "packages", barcode);
     const newStatusEntry = { date: new Date().toISOString(), status: newStatus };
     const updateData = {}
@@ -15,6 +15,8 @@ export async function updateOrder(barcode, newStatus = null, incrementRate = nul
     if(palletId) {updateData.palletId = palletId}
 
     if(deliveryStatus) {updateData.deliveryStatus = deliveryStatus}
+
+    if(signature) {updateData.signature = signature}
 
     try {
         await updateDoc(orderRef, updateData)

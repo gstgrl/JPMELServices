@@ -32,8 +32,8 @@
 
     watch(() => cameraStore.scannedCode, async (newCode) => {
         if (newCode) {
-            barcodeValue.value = newCode;
-            addOrder()
+          barcodeValue.value = newCode;
+          addOrder()
         }
     });
 
@@ -94,7 +94,7 @@
         class="btn btn-primary mt-3"
         @click="closePallet"
         v-if="outBoundPallet.orders.length !== 0"
-      >
+        >
         <font-awesome-icon :icon="['fas', 'check-circle']" />
         {{ $t('palletClosure.closureButton') }}
       </button>

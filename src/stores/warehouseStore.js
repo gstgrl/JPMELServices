@@ -30,7 +30,7 @@ export const useWareHouseStore = defineStore("wareHouse", {
                             
                             if (found) {
                                 const order = {data: orderStore.order, barcode: barcode} //Effettuo una copia dell'ordine estratto dal DB prima di resettare il pinia Store
-                                updateOrder(barcode, "Arrived in the Dominican Republic", 1, null, 'pending');
+                                updateOrder(barcode, "Arrived in the Dominican Republic", 1, null, 'pending', null);
                                 orderStore.resetOrder();
                                 return order; // Copia indipendente dei dati
                             }

@@ -1,5 +1,5 @@
 <script setup>
-    import { RouterLink, useRouter } from "vue-router";
+    import { RouterLink } from "vue-router";
     import { onMounted } from "vue";
     import offcanva from "./offcanva.vue";
 
@@ -10,8 +10,6 @@
 
     const authStore = useAuthStore();
     const deliveryPoolStore = useDeliveryPool()
-
-    const router = useRouter();
 
     onMounted(() => {
         // Verifica se l'utente è loggato all'inizio
@@ -45,21 +43,32 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <!-- Desktop view -->
           <div class="navbar-nav unhidden-bottom-bar d-none d-lg-flex">
-            <div class="bottom-bar-links">
-              <RouterLink to="/newOrder" class="nav-link"><h6>{{ $t('navbar.newOrder') }}</h6></RouterLink>
-              <RouterLink to="/closePallet" class="nav-link"><h6>{{ $t('navbar.newPallet') }}</h6></RouterLink>
-              <RouterLink to="/warehouse" class="nav-link" v-if="!deliveryPoolStore.onDelivery"><h6>{{ $t('navbar.warehouse') }}</h6></RouterLink>
-              <RouterLink to="/delivery" class="nav-link"><h6>DELIVERY MANAGER</h6></RouterLink>
-            </div>
+              <div class="bottom-bar-links" v-if="!deliveryPoolStore.onDelivery">
+                <RouterLink to="/newOrder" class="nav-link"><h6>{{ $t('navbar.newOrder') }}</h6></RouterLink>
+                <RouterLink to="/closePallet" class="nav-link"><h6>{{ $t('navbar.newPallet') }}</h6></RouterLink>
+                <RouterLink to="/warehouse" class="nav-link" ><h6>{{ $t('navbar.warehouse') }}</h6></RouterLink>
+              </div>
+
+              <div class="bottom-bar-links" v-else>
+                <RouterLink to="/newOrder" class="nav-link"><h6>{{ $t('navbar.newOrder') }}</h6></RouterLink>
+                <RouterLink to="/closePallet" class="nav-link"><h6>{{ $t('navbar.newPallet') }}</h6></RouterLink>
+                <RouterLink to="/delivery" class="nav-link"><h6>DELIVERY MANAGER</h6></RouterLink>
+              </div>
           </div>
   
           <!-- Mobile view -->
           <div class="navbar-nav bottom-bar d-flex d-lg-none">
-            <div class="bottom-bar-links">
-              <RouterLink to="/newOrder" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl" /></RouterLink>
-              <RouterLink to="/closePallet" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl" /></RouterLink>
-              <RouterLink to="/warehouse" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'warehouse']" /></RouterLink>
-            </div>
+              <div class="bottom-bar-links" v-if="!deliveryPoolStore.onDelivery">
+                <RouterLink to="/newOrder" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl" /></RouterLink>
+                <RouterLink to="/closePallet" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl" /></RouterLink>
+                <RouterLink to="/warehouse" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'warehouse']" /></RouterLink>
+              </div>
+              
+              <div class="bottom-bar-links" v-else>
+                <RouterLink to="/newOrder" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'box']" class="fa-xl" /></RouterLink>
+                <RouterLink to="/closePallet" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'pallet']" class="fa-xl" /></RouterLink>
+                <RouterLink to="/delivery" class="nav-link nav-link-page"><font-awesome-icon :icon="['fas', 'truck']" class="fa-xl" /></RouterLink>
+              </div>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import badge from './badge.vue';
     import { useDeliveryPool } from '@/stores/deliveryPoolStore';
+    import signaturePad from '@/components/ui/signaturePad.vue';
 
     const props = defineProps({
         item: {
@@ -10,18 +11,22 @@
         }
     });
 
-    const popup = ref(null);
     const deliveryPoolStore = useDeliveryPool()
+    const showSigaturePad = ref(false)
 
-    const startSignature = async (order) => {
+    const startSignature = async () => {
         const signed = true
 
-        if (signed) {deliveryPoolStore.orderDeliveredFunction(props.item)}
+        if (signed) {deliveryPoolStore.orderDeliveredFunction(props.item, )}
     };
 
-    const rescheduleDelivery = async (order) => {
+    const rescheduleDelivery = async () => {
         deliveryPoolStore.orderRescheduled(props.item)
     };
+
+    const handleSignature = async (signatureDataUrl) => {
+        deliveryPoolStore.orderDeliveredFunction(props.item, signatureDataUrl)
+    }
 </script>
 
 
@@ -55,20 +60,21 @@
 
                     <div class="d-flex justify-content-end gap-3 mt-4" v-if="item.data.deliveryStatus != 'delivered'">
                         <!-- Firma e consegna -->
-                        <button class="btn btn-success" @click="startSignature(item)">
+                        <button class="btn btn-success" @click="showSigaturePad = true">
                             ✍️ {{ $t('delivery.buttons.signatureButton') }}
                         </button>
 
                         <!-- Nessuno in casa -->
-                        <button class="btn btn-warning" @click="rescheduleDelivery(item)" v-if="item.data.deliveryStatus != 'rescheduled'">
+                        <button class="btn btn-warning" @click="rescheduleDelivery()" v-if="item.data.deliveryStatus != 'rescheduled'">
                             ⏳ {{ $t('delivery.buttons.rescheduleButton') }}
                         </button>
                     </div>
 
+                    <signaturePad :barcode="item.barcode" @signature-confirmed="handleSignature" v-if="showSigaturePad"/>
+
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
