@@ -5,50 +5,70 @@ import { collection, getDoc, doc, setDoc } from "firebase/firestore";
 
 export const useOrderStore = defineStore('orderStore', {
   state: () => ({
-    order: null
+    currentOrder: {
+        receiver:{
+            name: '',
+            surname: '',
+            email: '',
+            phone: '',
+            addressInfo: {
+                address: '',
+                city: '',
+                province: '',
+                zipCode: ''
+            }
+        },
+        sender:{
+            name: '',
+            surname: '',
+            email: '',
+            phone: '',
+            addressInfo: {
+                address: '',
+                city: '',
+                province: '',
+                zipCode: ''
+            }
+        },
+        barcode: '',
+        package_number: 1,
+        sender_id: '',
+        receiver_id: '',
+    },
   }),
 
   actions: {
-    //Funzione che ritorna il documento da Firebase con il codice a barre corrispondente facendo un controllo sulla validità dello statusCount
-    async fetchOrderByBarcode(barcode, statusCount) {     
-        try {
-            const orderRef = doc(db, "packages", barcode);
-            const orderDoc = await getDoc(orderRef); // Ottieni il documento
-        
-            if (orderDoc.exists()) {
-                const data = orderDoc.data()
+    addNewInfo(client = null, type = null, barcode = null) {
+        if(client && type) {
+            this.currentOrder[type].name = client.name
+            this.currentOrder[type].surname = client.surname
+            this.currentOrder[type].email = client.email
+            this.currentOrder[type].phone = client.phone
+            this.currentOrder[type].addressInfo.address = client.addressInfo.address
+            this.currentOrder[type].addressInfo.city = client.addressInfo.city
+            this.currentOrder[type].addressInfo.province = client.addressInfo.province
+            this.currentOrder[type].addressInfo.zipCode = client.addressInfo.zipCode
 
-                if(data.statusCount === statusCount) {
-                    this.order = data
-                    return true
-                }
+            if(type == 'sender') {
+                this.currentOrder.sender_id = client.id
             } else {
-                console.error("Ordine non idoneo")
-                return false
+                this.currentOrder.receiver_id = client.id
             }
-        } catch (error) {
-            console.error("Errore nel recupero del documento:", error);
-            return false
         }
+
+        if(barcode) {this.currentOrder.barcode = barcode}
     },
 
-    //Aggiunge l'ordine corrente nel databse
-    async addOrder(barcode, orderData) {
-        const orderRef = doc(collection(db, "packages"), barcode)
-        await setDoc(orderRef, {
-            ...orderData,
-            statusHistory: [{
-                date: new Date().toISOString(),
-                status: "Packaging"
-            }],
-            statusCount: 1
-        })
-    },
-
-    resetOrder() {
-        this.order = null
+    deleteInfo(type) {
+        this.currentOrder[type].name = ''
+        this.currentOrder[type].surname = ''
+        this.currentOrder[type].email = ''
+        this.currentOrder[type].phone = ''
+        this.currentOrder[type].addressInfo.address = ''
+        this.currentOrder[type].addressInfo.city = ''
+        this.currentOrder[type].addressInfo.province = ''
+        this.currentOrder[type].addressInfo.zipCode = '' 
+        
     }
   },
-
-  persist: true,  // Abilita la persistenza dei dati, se necessario
 });

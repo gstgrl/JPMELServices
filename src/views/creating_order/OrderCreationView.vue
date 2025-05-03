@@ -1,143 +1,105 @@
 <script setup>
-    import { ref, nextTick, computed } from "vue";
-
+    import { ref, onMounted, nextTick } from "vue";
+    import modalComponent from "./modalComponent.vue";
+    import reserchInput from "./reserchInput.vue";
+    import orderInfo from "./orderInfo.vue";
     import { useOrderStore } from "@/stores/orderStore";
-    import { usePalletStore } from "@/stores/outBoundPalletStore";
-    import { generateNumericBarcode } from "@/services/generateBarcode";
-    import JsBarcode from 'jsbarcode';
 
-
-    const generatedBarcode = ref(false)
-    const barcode = ref("")
-    const currentOrder = ref({
-        name: "",
-        surname: "",
-        address: "",
-        province: "",
-        city: "",
-        phoneNumber: ""
-    })
-
-    const palletStore = usePalletStore()
+    
+    const modal = ref(null)
+    const modalType = ref('sender')
+    const modalTitle = ref('')
     const orderStore = useOrderStore()
 
-    const generateBarcode = async() => {
-        barcode.value = generateNumericBarcode(); // Genera e salva il codice
-        generatedBarcode.value = true
+    const openModal = async (type) => {
+        modalType.value = type
+        if(type == 'sender') {
+            modalTitle.value = "Crea Mittente"
+        } else {
+            modalTitle.value = "Crea Destinatario" 
+        }
+        await nextTick()
 
-        await nextTick();
-
-        JsBarcode("#barcode", barcode.value, {
-            format: "CODE128",
-            displayValue: true,
-        });
+        modal.value.open()
     }
 
-    const saveOrder = () => {
-        palletStore.addOrder(barcode.value, null, currentOrder.value)
-        orderStore.addOrder(barcode.value, currentOrder.value)
-        //generatePDFLabel(barcode.value, currentOrder.value)
-        resetOrder()
-        generatedBarcode.value = false
-    };
-
-    const isFormValid = computed(() => {
-        return Object.values(currentOrder.value).every(value => value !== '');
-    });
-
-    const resetOrder = () => {
-        Object.keys(currentOrder.value).forEach(key => {
-            currentOrder.value[key] = ''; // Imposta ogni valore a stringa vuota
-        });
-    };
 </script>
 
 <template>
-    <div class="container mt-5">
-        <div class="title-barcode">
-            <h2>{{ $t('orderCreation.title') }}</h2>
-            <svg v-if="generatedBarcode" id="barcode"></svg>
-        </div>
+    <div class="container mt-3">
+        <div class="row main-div">
 
-        <form @submit.prevent="saveOrder">
-            <div class="mb-3">
-                <label class="form-label">{{ $t('orderCreation.receiver') }}</label>
-                <div class="name-surname-div">
-                    <input
-                        type="text"
-                        class="form-control m-1"
-                        v-model="currentOrder.name"
-                        :placeholder="$t('orderCreation.placeholderNameReciver')"
-                        required
-                    />
-                    <input
-                        type="text"
-                        class="form-control m-1"
-                        v-model="currentOrder.surname"
-                        :placeholder="$t('orderCreation.placeholderSurnameReciver')"
-                        required
-                    />
+            <div class="col-5 mb-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-row align-items-center">
+                            <button class="btn btn-secondary custom-button me-2" @click="openModal('sender')"><font-awesome-icon :icon="['fas', 'plus']" /></button>
+                            <reserchInput input-type="sender" :input-title="$t('orderCreation.sender')"/>
+                        </div>
+
+                        <div class="mt-2">
+                            <h6 class="text-muted mb-2">{{ $t('orderCreation.sender') }}</h6>
+                            <p><strong>{{ $t('orderCreation.placeholderNameReciver') }}:</strong> {{ orderStore.currentOrder.sender.name }} {{ orderStore.currentOrder.sender.surname }}</p>
+                            <p><strong>Email:</strong> {{ orderStore.currentOrder.sender.email }}</p>
+                            <p><strong>{{ $t('orderCreation.phoneNumber') }}:</strong> {{ orderStore.currentOrder.sender.phone }}</p>
+                            <p><strong>{{ $t('orderCreation.address') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.address }}</p>
+                            <p><strong>{{ $t('orderCreation.province') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.province }}</p>
+                            <p><strong>{{ $t('orderCreation.city') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.city }}</p>
+                            <p><strong>{{ $t('orderCreation.zipCode') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.zipCode }}</p>
+                            <p><strong>{{ $t('orderCreation.zipCode') }}:</strong> {{ orderStore.currentOrder.sender_id }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-5 mb-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-row align-items-center">
+                            <reserchInput input-type="receiver" :input-title="$t('orderCreation.receiver')"/>
+                            <button class="btn btn-secondary custom-button ms-2" @click="openModal('receiver')"><font-awesome-icon :icon="['fas', 'plus']" /></button>
+                        </div>
+
+                        <div class="mt-2">
+                            <h6 class="text-muted mb-2">{{ $t('orderCreation.receiver') }}</h6>
+                            <p><strong>{{ $t('orderCreation.placeholderNameReciver') }}:</strong> {{ orderStore.currentOrder.receiver.name }} {{ orderStore.currentOrder.receiver.surname }}</p>
+                            <p><strong>Email:</strong> {{ orderStore.currentOrder.receiver.email }}</p>
+                            <p><strong>{{ $t('orderCreation.phoneNumber') }}:</strong> {{ orderStore.currentOrder.receiver.phone }}</p>
+                            <p><strong>{{ $t('orderCreation.address') }}:</strong> {{ orderStore.currentOrder.receiver.addressInfo.address }}</p>
+                            <p><strong>{{ $t('orderCreation.province') }}:</strong> {{ orderStore.currentOrder.receiver.addressInfo.province }}</p>
+                            <p><strong>{{ $t('orderCreation.city') }}:</strong> {{ orderStore.currentOrder.receiver.addressInfo.city }}</p>
+                            <p><strong>{{ $t('orderCreation.zipCode') }}:</strong> {{ orderStore.currentOrder.receiver.addressInfo.zipCode }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">{{ $t('orderCreation.address') }}</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    v-model="currentOrder.address"
-                    required
-                />
+            <div class="col-2">
+                <orderInfo />
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">{{ $t('orderCreation.province') }}</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    v-model="currentOrder.province"
-                    required
-                />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">{{ $t('orderCreation.city') }}</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    v-model="currentOrder.city"
-                    required
-                />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">{{ $t('orderCreation.phoneNumber') }}</label>
-                <input
-                    type="phone"
-                    class="form-control"
-                    v-model="currentOrder.phoneNumber"
-                    required
-                />
-            </div>
-
-            <button type="button" class="btn btn-light" @click="generateBarcode" :disabled="!isFormValid" v-if="!generatedBarcode">{{ $t('orderCreation.buttons.generateBarCode') }}</button>
-            <button type="submit" v-if="generatedBarcode" class="btn btn-primary">{{ $t('orderCreation.buttons.saveOrder') }}</button>
-        </form>
+        </div>
     </div>
-</template>
+
+    
+
+    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" id="ModalSenderInfo" :modal-type="modalType" :modal-id="'ModalSenderInfo'"></modalComponent>
+  </template>
 
 
 <style scoped>
-    .title-barcode {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
-    }
+    @media (max-width: 1023px) {
+        .main-div {
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .name-surname-div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
+        .col-5 {
+            width: 100%;
+        }
+
+        .col-2 {
+            width: 100%;
+        }
     }
 </style>

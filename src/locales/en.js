@@ -23,6 +23,7 @@ export default {
     province: "Province",
     city: "City",
     phoneNumber: "Phone Number",
+    zipCode: "Zip Code",
     sender: "Sender",
     buttons: {
       generateBarCode: "Generate Barcode",

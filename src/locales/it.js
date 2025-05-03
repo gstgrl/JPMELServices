@@ -23,6 +23,7 @@ export default {
     province: "Provincia",
     city: "Città",
     phoneNumber: "Cellulare",
+    zipCode: "CAP",
     sender: "Mittente",
     buttons: {
       generateBarCode: "Genera codice a barre",
