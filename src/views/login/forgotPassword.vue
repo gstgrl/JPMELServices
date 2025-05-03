@@ -1,20 +1,25 @@
 <script setup>
     import { ref } from "vue";
     import { supabase } from "@/services/supabase"; // Assicurati che questo punto venga configurato correttamente
+    import { useAuthStore } from "@/stores/auth";
 
     const email = ref("");
     const errorMessage = ref("");
     const successMessage = ref("");
+    const authStore = useAuthStore()
 
     const sendResetLink = async () => {
     errorMessage.value = "";
     successMessage.value = "";
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email.value);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
+        redirectTo: 'http://localhost:5173/reset-password',
+    });
 
         if (error) {
             errorMessage.value = error.message;
         } else {
+            authStore.isRecovering = true
             successMessage.value = "Controlla la tua email per il link di reset!";
         }
     };

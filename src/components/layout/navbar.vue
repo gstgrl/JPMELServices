@@ -1,6 +1,5 @@
 <script setup>
     import { RouterLink } from "vue-router";
-    import { onMounted } from "vue";
     import offcanva from "./offcanva.vue";
 
 
@@ -36,6 +35,7 @@
     <nav v-if="authStore.isLogged" class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
           <!-- Desktop view -->
           <div class="navbar-nav unhidden-bottom-bar d-none d-lg-flex">
               <div class="bottom-bar-links" v-if="!deliveryPoolStore.onDelivery">
@@ -75,7 +75,7 @@
 
 <style scoped>
     h6 {
-    margin-right: 0.8rem;
+      margin-right: 0.8rem;
     }
 
     .unhidden-bottom-bar {

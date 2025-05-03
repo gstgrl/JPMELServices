@@ -2,22 +2,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/auth";
 import { watch } from 'vue';
 
-
+//Login Views
 import LoginView from '@/views/login/LoginView.vue';
+import forgotPassword from '@/views/login/forgotPassword.vue';
+import resetPassword from '@/views/login/resetPassword.vue';
+
 import Dashboard from '@/views/dashboard/Dashboard.vue';
 import CreateUser from '@/views/creating_user/CreateUser.vue';
 import OrderCreationView from '@/views/creating_order/OrderCreationView.vue';
 import PalletClosureView from '@/views/closure_pallet/PalletClosureView.vue';
 import WareHouseView from '@/views/warehouse/WareHouseView.vue';
 import OrderDeliveryManagmentView from '@/views/delivery_view/OrderDeliveryManagmentView.vue';
-import forgotPassword from '@/views/login/forgotPassword.vue';
-import resetPassword from '@/views/login/resetPassword.vue';
 
 
 const routes = [
   {path: '/login', component: LoginView},
   {path: '/forgot', component: forgotPassword},
-  {path: '/reset-password', component: resetPassword},
+  {path: '/reset-password', component: resetPassword, meta: { hideNavbar: true}},
   {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true}},
   {path: "/createUser", component: CreateUser, meta: { requiresAuth: true}},
   {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true}},
@@ -36,9 +37,9 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
   // Aspetta che il controllo dell'autenticazione sia completato
-  if (authStore.loading) {
+  if (authStore.isLoading) {
     const unwatch = watch(
-      () => authStore.loading,
+      () => authStore.isLoading,
       (newVal) => {
         if (!newVal) {
           unwatch();
@@ -51,7 +52,7 @@ router.beforeEach((to, from, next) => {
   }
 
   function proceed() {
-    if (to.meta.requiresAuth && !authStore.user) {
+    if (to.meta.requiresAuth && !authStore.user && !authStore.isRecovering) {
       // Se la route richiede autenticazione ma l'utente non è loggato, vai al login
       next("/login");
     } else if (authStore.user && to.path === "/login") {

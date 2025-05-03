@@ -7,7 +7,8 @@ export const useAuthStore = defineStore("auth", {
     session: null,
     errorMessage: null,
     isLogged: false,
-    isLoading: true
+    isLoading: true,
+    isRecovering: false
   }),
   actions: {
     async init() {
@@ -16,10 +17,17 @@ export const useAuthStore = defineStore("auth", {
       this.isLoading = false
   
       // ascolta eventuali cambiamenti (es. logout automatico o nuovo login)
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange((event, session) => {
         this.user = session?.user || null
         this.session = session
         this.isLogged = !!session
+
+        // Controlla se è un flusso di recupero password
+        if (event === 'PASSWORD_RECOVERY') {
+          this.isRecovering = true
+        } else {
+          this.isRecovering = false
+        }
       })
     },
 
@@ -56,6 +64,7 @@ export const useAuthStore = defineStore("auth", {
         this.user = null
         this.session = null
         this.isLogged = false
+        this.isRecovering = false
         return true
       }
     }
