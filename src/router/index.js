@@ -10,10 +10,14 @@ import OrderCreationView from '@/views/creating_order/OrderCreationView.vue';
 import PalletClosureView from '@/views/closure_pallet/PalletClosureView.vue';
 import WareHouseView from '@/views/warehouse/WareHouseView.vue';
 import OrderDeliveryManagmentView from '@/views/delivery_view/OrderDeliveryManagmentView.vue';
+import forgotPassword from '@/views/login/forgotPassword.vue';
+import resetPassword from '@/views/login/resetPassword.vue';
 
 
 const routes = [
   {path: '/login', component: LoginView},
+  {path: '/forgot', component: forgotPassword},
+  {path: '/reset-password', component: resetPassword},
   {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true}},
   {path: "/createUser", component: CreateUser, meta: { requiresAuth: true}},
   {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true}},

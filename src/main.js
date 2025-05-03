@@ -46,7 +46,7 @@ app.use(pinia); // Pinia va registrata prima di usarla
 
 // Ora puoi usare gli store
 const authStore = useAuthStore();
-authStore.checkAuth(); // Controlla se l'utente è loggato
+authStore.init(); // Controlla se l'utente è loggato
 
 // Registra il componente FontAwesome a livello globale
 app.component("font-awesome-icon", FontAwesomeIcon);

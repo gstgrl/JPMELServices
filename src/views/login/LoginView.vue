@@ -11,11 +11,17 @@
 
     const login = async () => {
         try {
-          await authStore.login(email.value, password.value);  // Chiamata al login
-          router.push("/dashboard");
+          const result = await authStore.login(email.value, password.value);  // Chiamata al login
+
+          if(result) {
+            router.push("/dashboard");
+          } else {
+            // Se il login è fallito, mostra il messaggio di errore dallo store
+            alert(authStore.errorMessage || "Credenziali errate.");
+          }
             
         } catch (error) {
-          console.error("Errore nel login", error)
+          alert("Si è verificato un errore durante il login.");
         }
     };
 </script>
@@ -45,7 +51,9 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">{{ $t('accessWords.login') }}</button>
+      <RouterLink to="/forgot"><h6>Recupera Password</h6></RouterLink>
+
+      <button type="submit" class="btn btn-primary mt-3">{{ $t('accessWords.login') }}</button>
     </form>
   </div>
 </template>

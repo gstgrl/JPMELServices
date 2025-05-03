@@ -11,18 +11,13 @@
     const authStore = useAuthStore();
     const deliveryPoolStore = useDeliveryPool()
 
-    onMounted(() => {
-        // Verifica se l'utente è loggato all'inizio
-        authStore.checkAuth();
-    });
-
 </script>
 
 <template>
     <!-- Navbar principale -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <RouterLink class="navbar-brand" :to="authStore.isLoggedIn ? '/dashboard' : '/login'">
+        <RouterLink class="navbar-brand" :to="authStore.isLogged ? '/dashboard' : '/login'">
           JP MEL Services
         </RouterLink>
 
@@ -31,14 +26,14 @@
         </button>
   
         <!-- Toggler sempre visibile per aprire Offcanvas -->
-        <button class="btn btn-outline-light ms-auto me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu"  v-if="authStore.isLoggedIn">
+        <button class="btn btn-outline-light ms-auto me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu"  v-if="authStore.isLogged">
             <font-awesome-icon :icon="['fas', 'gear']" />
         </button>
       </div>
     </nav>
   
     <!-- Navbar secondaria per utenti loggati -->
-    <nav v-if="authStore.isLoggedIn" class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav v-if="authStore.isLogged" class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <!-- Desktop view -->
