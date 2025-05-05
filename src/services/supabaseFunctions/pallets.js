@@ -13,7 +13,7 @@ export function usePallets() {
   }
 
   const createPallet = async (palletInfo) => {
-    const { data, error } = await supabase.from("pallets").insert([palletInfo]).select()
+    const { data, error } = await supabase.from("pallets").insert([palletInfo]).select().single()
     return { data, error }
   }
 

@@ -1,12 +1,9 @@
 <script setup>
     import { useClients } from '@/services/supabaseFunctions/clients';
+    import { Modal } from 'bootstrap'
     import { onMounted, ref } from 'vue';
 
     const props = defineProps({
-        show: {
-            type: Boolean,
-            required: true
-        },
         senderID: {
             type: String,
             required: true
@@ -17,38 +14,71 @@
         }
     })
 
+    const modalRef = ref(null)
     const sender = ref({})
     const receiver = ref({})
 
+    let modalInstance = null
 
-    onMounted(() => {
-        sender.value = useClients().getClient(props.senderID)
-        receiver.value = useClients().getClient(props.receiverID)
+    onMounted(async() => {
+        if (modalRef.value) {
+            modalInstance = new Modal(modalRef.value)
+        }
     })
 
-    defineEmits(['close'])
+    const open = async() => {
+        if(!props.senderID || !props.receiverID) {
+            console.error('ID mittente o ID destinatario mancanti')
+            return
+        }
+
+        const {data: senderData, error: senderError} = await useClients().getClient(props.senderID)
+        const {data: receiverData, error: receiverError} = await useClients().getClient(props.receiverID)
+
+        if (senderError || receiverError) {
+            console.error('Errore nel recupero dati:', senderError || receiverError)
+            return
+        }
+
+        sender.value = senderData
+        receiver.value = receiverData 
+
+        modalInstance?.show()
+    }
+
+    const close = () => modalInstance?.hide()
+
+    defineExpose({ open })    
 </script>
 
 <template>
-    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-        <h2 class="text-xl font-bold mb-4">Informazioni Ordine</h2>
-
-        <div class="mb-3">
-            <h3 class="font-semibold">Mittente:</h3>
-            <p>Nome: {{ sender.name }}</p>
-            <p>Indirizzo: {{ sender.address }}</p>
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true" ref="modalRef">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">INFO</h5>
+          <button class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi" @click="close"></button>
         </div>
+        <div class="modal-body">      
+            <div class="my-2" v-if="sender.addressInfo">
+                <h6 class="text-muted">{{ $t('orderCreation.sender') }}</h6>
+                <p><strong>{{ $t('orderCreation.placeholderNameReciver') }}:</strong> {{ sender.name }} {{ sender.surname }}</p>
+                <p><strong>{{ $t('orderCreation.address') }}:</strong> {{ sender.addressInfo.address }}</p>
+                <p><strong>{{ $t('orderCreation.province') }}:</strong> {{ sender.addressInfo.province }}</p>
+                <p><strong>{{ $t('orderCreation.city') }}:</strong> {{ sender.addressInfo.city }}</p>
+            </div>
 
-        <div>
-            <h3 class="font-semibold">Destinatario:</h3>
-            <p>Nome: {{ receiver.name }}</p>
-            <p>Indirizzo: {{ receiver.address }}</p>
+            <div class="mb-2" v-if="receiver.addressInfo">
+                <h6 class="text-muted">{{ $t('orderCreation.receiver') }}</h6>
+                <p><strong>{{ $t('orderCreation.placeholderNameReciver') }}:</strong> {{ receiver.name }} {{ receiver.surname }}</p>
+                <p><strong>{{ $t('orderCreation.address') }}:</strong> {{ receiver.addressInfo.address }}</p>
+                <p><strong>{{ $t('orderCreation.province') }}:</strong> {{ receiver.addressInfo.province }}</p>
+                <p><strong>{{ $t('orderCreation.city') }}:</strong> {{ receiver.addressInfo.city }}</p>
+            </div>
         </div>
-
-        <button @click="$emit('close')" class="mt-5 bg-blue-600 text-white px-4 py-2 rounded">Chiudi</button>
-        </div>
+      </div>
     </div>
+  </div>
 </template>
   
   

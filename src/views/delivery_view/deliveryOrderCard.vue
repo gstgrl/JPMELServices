@@ -71,7 +71,6 @@
                     </div>
 
                     <signaturePad :barcode="item.barcode" @signature-confirmed="handleSignature" v-if="showSigaturePad"/>
-
                 </div>
             </div>
         </div>

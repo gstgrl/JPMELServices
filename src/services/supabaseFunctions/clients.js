@@ -33,7 +33,7 @@ export function useClients() {
   }
 
   const getClient = async (id) => {
-    const { data, error } = await supabase.from('clients').eq('id', id)
+    const { data, error } = await supabase.from('clients').select('*').eq('id', id).single()
     return { data, error }
   }
 

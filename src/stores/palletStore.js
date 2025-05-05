@@ -1,14 +1,12 @@
 import { defineStore } from "pinia";
-import { setDoc, doc } from "firebase/firestore";
 import { useAuthStore } from '@/stores/auth';
 import { useOrderStore } from "./orderStore";
 import { updateOrder } from "@/services/updates";
 
 import { useOrders } from "@/services/supabaseFunctions/orders";
-
-import { db } from "@/services/firebase";
 import { v4 as uuidv4 } from 'uuid'; // Per generare un ID univoco
 import QRCode from 'qrcode'; // Importa la libreria qrcode
+import { usePallets } from "@/services/supabaseFunctions/pallets";
 
 export const usePalletStore = defineStore("palletStore", {
   state: () => ({
@@ -18,31 +16,27 @@ export const usePalletStore = defineStore("palletStore", {
   }),
   actions: {
     async closePallet() {
-        const authStore = useAuthStore()
+        if(!this.palletId) {
+            const {data: palletData, error: palletError} = await usePallets().createPallet({status: 'Loading'})
+            
 
-        try {
-            const palletRef = doc(db, "pallets", this.palletId);
+            if(palletError || !palletData) {
+                console.error("Errore durante la creazione del bancale", palletError)
+                return
+            }
 
-            await setDoc(palletRef, {
-                barcodes: this.barcodeOrdersInPallet,
-                palletStatus: "Closed",
-                createdBy: authStore.user.uid,
-                createdAt: new Date().toISOString()
-            })
+            this.palletId = palletData.id
+        } 
 
-            const updatePromises = this.barcodeOrdersInPallet.map(barcode => 
-                updateOrder(barcode, "Shipped by Sea", 1, this.palletId, null, null)
-            );
+        for (let barcode of this.barcodes) {
+            const {data: orders, error: ordersError} = await useOrders().updateOrder(null, barcode, {'pallet_id': this.palletId, 'status': 2})
 
-            await Promise.all(updatePromises);
-        } catch (error) {
-            console.error('Errore durante la chiusura del bancale:', error);
-            alert('Errore durante la chiusura del bancale.');
+            if (ordersError) {
+                console.error(`Errore nell'aggiornamento dell'ordine ${barcode}:`, ordersError);
+            } else {
+                console.log(`Ordine ${barcode} aggiornato con successo.`);
+            }
         }
-    },
-    
-    defineID () {
-        this.palletId = uuidv4()
     },
 
     generateQrCode() {
@@ -63,14 +57,15 @@ export const usePalletStore = defineStore("palletStore", {
 
     async addOrder(barcode) {
         const { data: orderData, error: orderError } = await useOrders().getOrder(barcode, 1)
+        const orderID = orderData.id
 
-        if (orderError || !orderData?.length) {
+        if(orderError || !orderData) {
             console.error("Errore durante l'aggiunta dell’ordine:", orderError)
             return
         }
 
-        this.orders.push(orderData[0])
-        this.barcodes.push(orderData[0].barcode)
+        this.orders.push(orderData)
+        this.barcodes.push(orderData.barcode)
     },
 
     checkAlreadyIn(barcode) {
@@ -85,7 +80,7 @@ export const usePalletStore = defineStore("palletStore", {
     resetPalletStore() {
         this.orders = []
         this.palletId = null
-        this.barcodeOrdersInPallet = []
+        this.barcodes = []
     }
   },
   persist: true,

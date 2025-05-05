@@ -84,7 +84,7 @@
 
     
 
-    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" :modal-type="modalType"></modalComponent>
+    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" :modal-type="modalType"/>
   </template>
 
 

@@ -43,39 +43,6 @@
             return
         }
 
-        const orderID = orderData[0].id
-
-        if(orderStore.currentOrder.addToPallet) {
-            
-            palletStore.orders.push(orderStore.currentOrder)
-            palletStore.barcodes.push(orderStore.currentOrder.barcode)
-            let palletID = palletStore.palletId
-
-            //Se non è presente alcun bancale lo creo ed associo quel palletID nel Pinia Store
-            if(!palletID) {
-                const { data: palletData, error: palletError } = await usePallets().createPallet({status: "Loading"})
-
-                if (palletError || !palletData?.length) {
-                    console.error('Errore durante la creazione del pallet:', palletError)
-                    return
-                }
-
-                palletID = palletData[0].id
-                palletStore.palletId = palletID //Associo il nuovo palletID al Pinia cosi da caricare i futuri ordini nel bancale
-            }
-
-            //Fa l'aggiornamento dell'ordine aggiungendo il palletID corrispondente
-            const { error: updateError } = await useOrders().updateOrder(orderID, {
-                pallet_id: palletID
-            })
-
-            if (updateError) {
-                console.error('Errore nell’associare pallet all’ordine:', updateError)
-                return
-            }
-
-        }
-
         barcode.value = ''
         generatedBarcode.value = false
         orderStore.resetOrder()  
@@ -88,11 +55,6 @@
     <form @submit.prevent="generateBarcode">
         <div class="title-barcode">
             <svg v-if="generatedBarcode" id="barcode"></svg>
-        </div>
-
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="orderStore.currentOrder.addToPallet">
-            <label class="form-check-label" for="exampleCheck1">Aggiungere al bancale</label>
         </div>
 
         <div class="input-group mb-3">

@@ -8,11 +8,13 @@
     import { useOrderStore } from "@/stores/orderStore";
     import { useWareHouseStore } from "@/stores/warehouseStore";
     import { useDeliveryPool } from "@/stores/deliveryPoolStore";
+    import { usePalletStore } from "@/stores/palletStore";
 
     const authStore = useAuthStore();
     const orderStore = useOrderStore()
     const warehouseStore = useWareHouseStore()
     const deliveryPoolStore = useDeliveryPool()
+    const palletStore = usePalletStore()
 
     const router = useRouter();
 
@@ -23,6 +25,7 @@
         orderStore.resetOrder()
         warehouseStore.resetWarehouseStore()
         deliveryPoolStore.resetPool()
+        palletStore.resetPalletStore()
 
         router.push('/login');
     }

@@ -7,9 +7,14 @@ export function useOrders() {
     return { data, error }
   }
 
-  const getOrder = async (barcode, status) => {
-    const { data, error } = await supabase.from("orders").select("*").eq("barcode", barcode).eq("status", status)
-    return { data, error }
+  const getOrder = async (barcode, status=null) => {
+    if(status) {
+      const { data, error } = await supabase.from("orders").select("*").eq("barcode", barcode).eq("status", status).single()
+      return { data, error }
+    } else {
+      const { data, error } = await supabase.from("orders").select("*").eq("barcode", barcode).single()
+      return { data, error }
+    }   
   }
 
   const createOrder = async (order) => {
@@ -17,9 +22,16 @@ export function useOrders() {
     return { data, error }
   }
 
-  const updateOrder = async (id, updates) => {
-    const { data, error } = await supabase.from("orders").update(updates).eq("id", id)
-    return { data, error }
+  const updateOrder = async (id=null, barcode=null, updates) => {
+    if(barcode) {
+      const { data, error } = await supabase.from("orders").update(updates).eq("barcode", barcode)
+      return { data, error }
+
+    }else {
+      const { data, error } = await supabase.from("orders").update(updates).eq("id", id)
+      return { data, error }
+
+    }
   }
 
   const deleteOrder = async (id) => {
