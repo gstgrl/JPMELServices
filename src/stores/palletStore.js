@@ -4,15 +4,17 @@ import { useAuthStore } from '@/stores/auth';
 import { useOrderStore } from "./orderStore";
 import { updateOrder } from "@/services/updates";
 
+import { useOrders } from "@/services/supabaseFunctions/orders";
+
 import { db } from "@/services/firebase";
 import { v4 as uuidv4 } from 'uuid'; // Per generare un ID univoco
 import QRCode from 'qrcode'; // Importa la libreria qrcode
 
-export const usePalletStore = defineStore("outBoundPallet", {
+export const usePalletStore = defineStore("palletStore", {
   state: () => ({
     orders: [],
-    palletId: null,
-    barcodeOrdersInPallet: [] //I barcode corrispondenti agli ordini presenti nel bancale
+    barcodes: [],
+    palletId: null
   }),
   actions: {
     async closePallet() {
@@ -59,44 +61,25 @@ export const usePalletStore = defineStore("outBoundPallet", {
         })
     },
 
-    async addOrder(barcode, statusCount = null ,orderData = null) {
-        const orderStore = useOrderStore()
+    async addOrder(barcode) {
+        const { data: orderData, error: orderError } = await useOrders().getOrder(barcode, 1)
 
-        if(orderData) {
-            //Se ho gia l'articolo, lo aggiungo soltanto al bancale
-            const temporaryOrder = {
-                ...orderData,
-                barcodeValue: barcode
-            }
-            this.orders.push(temporaryOrder)
-            this.barcodeOrdersInPallet.push(barcode)
-
-        } else {
-            //Se voglio aggiungere un articolo dovendolo recuperare dal database
-            await orderStore.fetchOrderByBarcode(barcode, statusCount).then((result) => {
-                if(result) {
-                    const temporaryOrder = {
-                        ...orderStore.order,
-                        barcodeValue: barcode
-                    }
-                    this.orders.push(temporaryOrder)
-                    this.barcodeOrdersInPallet.push(barcode)
-        
-                    orderStore.resetOrder()
-                } else {
-                    window.alert("Impossibile aggiungere questo ordine al bancale")
-                }
-            })
+        if (orderError || !orderData?.length) {
+            console.error("Errore durante l'aggiunta dell’ordine:", orderError)
+            return
         }
+
+        this.orders.push(orderData[0])
+        this.barcodes.push(orderData[0].barcode)
     },
 
     checkAlreadyIn(barcode) {
-        return this.barcodeOrdersInPallet.includes(barcode)
+        return this.barcodes.includes(barcode)
     },
 
     removeOrder(barcode) {
-        this.orders = this.orders.filter(item => item.barcodeValue != barcode)
-        this.barcodeOrdersInPallet = this.barcodeOrdersInPallet.filter(item => item != barcode)
+        this.orders = this.orders.filter(item => item.barcode != barcode)
+        this.barcodes = this.barcodes.filter(item => item != barcode)
     },
 
     resetPalletStore() {

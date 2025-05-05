@@ -34,7 +34,7 @@
 
         if (err) {
             results.value = []
-            console.error('Errore nella ricerca:', err)
+            //console.error('Errore nella ricerca:', err)
         } else {
             results.value = data || []  // Popola i risultati con i clienti trovati
         }
@@ -54,6 +54,8 @@
         showResults.value = false
         orderStore.deleteInfo(props.inputType)
     }
+
+    defineExpose({ deselectClient })
 </script>
 
 <template>

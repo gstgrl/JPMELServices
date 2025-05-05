@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted, nextTick } from "vue";
+    import { ref, nextTick } from "vue";
     import modalComponent from "./modalComponent.vue";
     import reserchInput from "./reserchInput.vue";
     import orderInfo from "./orderInfo.vue";
@@ -7,12 +7,14 @@
 
     
     const modal = ref(null)
+
     const modalType = ref('sender')
     const modalTitle = ref('')
     const orderStore = useOrderStore()
 
     const openModal = async (type) => {
         modalType.value = type
+        
         if(type == 'sender') {
             modalTitle.value = "Crea Mittente"
         } else {
@@ -46,7 +48,6 @@
                             <p><strong>{{ $t('orderCreation.province') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.province }}</p>
                             <p><strong>{{ $t('orderCreation.city') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.city }}</p>
                             <p><strong>{{ $t('orderCreation.zipCode') }}:</strong> {{ orderStore.currentOrder.sender.addressInfo.zipCode }}</p>
-                            <p><strong>{{ $t('orderCreation.zipCode') }}:</strong> {{ orderStore.currentOrder.sender_id }}</p>
                         </div>
                     </div>
                 </div>
@@ -83,7 +84,7 @@
 
     
 
-    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" id="ModalSenderInfo" :modal-type="modalType" :modal-id="'ModalSenderInfo'"></modalComponent>
+    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" :modal-type="modalType"></modalComponent>
   </template>
 
 

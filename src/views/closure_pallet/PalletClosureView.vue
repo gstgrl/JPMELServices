@@ -3,27 +3,31 @@
     import { useRouter } from "vue-router";
     import scanner from '@/components/ui/scanner.vue';
     import barcode from '@/components/ui/barcode.vue';
+    import modalOrderInfo from './modalOrderInfo.vue';
 
     //Pinia Stores
-    import { usePalletStore } from '@/stores/outBoundPalletStore';
+    import { usePalletStore } from '@/stores/palletStore';
     import { useDeviceStore } from '@/stores/diveceStore';
     import { useCameraStore } from '@/stores/cameraStore';
 
     
     //Pinia stores intialization
-    const outBoundPallet = usePalletStore()
+    const palletStore = usePalletStore()
     const deviceStore = useDeviceStore()
     const cameraStore = useCameraStore()
     const router = useRouter();
     
     const barcodeValue = ref("")
+    const modalVisible = ref(false)
+    const sender_ID = ref(null)
+    const receiver_ID = ref(null)
 
 
     const addOrder = async () => {
-        const result = outBoundPallet.checkAlreadyIn(barcodeValue.value)
+        const result = palletStore.checkAlreadyIn(barcodeValue.value)
 
         if(!result) {
-            await outBoundPallet.addOrder(barcodeValue.value, 1, null)
+            await palletStore.addOrder(barcodeValue.value)
             barcodeValue.value = ""
         }else{
             window.alert("Ordine gia presente nel bancale")
@@ -38,13 +42,19 @@
     });
 
     const closePallet = async() => {
-        if(!outBoundPallet.palletId) {outBoundPallet.defineID()}
+        if(!palletStore.palletId) {palletStore.defineID()}
 
-        await outBoundPallet.closePallet()
-        outBoundPallet.generateQrCode()
-        outBoundPallet.resetPalletStore()
+        await palletStore.closePallet()
+        palletStore.generateQrCode()
+        palletStore.resetPalletStore()
 
         router.push("/dashboard")
+    }
+
+    const openModal = (order) => {
+      senderID.value = order.sender_id
+      receiverID.value = order.receiver_id
+      modalVisible.value = true
     }
 </script>
 
@@ -65,22 +75,18 @@
       </div>
   
       <!-- Lista degli ordini nel bancale -->
-      <div v-if="outBoundPallet.orders.length !== 0" class="orders">
-        <div v-for="(orderOnPallet, index) in outBoundPallet.orders" :key="index" class="order-item">
+      <div v-if="palletStore.orders.length !== 0" class="orders">
+        <div v-for="(orderOnPallet, index) in palletStore.orders" :key="index" class="order-item">
           <!-- Visualizzazione del Barcode come SVG -->
-          <barcode :barcode="orderOnPallet.barcodeValue" :id="`barcodeTag${index}`" />
+          <barcode :barcode="orderOnPallet.barcode" :id="`barcodeTag${index}`" />
   
           <!-- Dettagli ordine con bottone di rimozione -->
-          <div class="order-info">
-            <h6>{{ orderOnPallet.address }}, </h6>
-            <h6>{{ orderOnPallet.city }}, </h6>
-            <h6>{{ orderOnPallet.province }}</h6>
-          </div>
+          <button class="btn btn-success" @click="openModal(orderOnPallet)">INFO</button>
   
           <!-- Bottone per rimuovere l'ordine dal bancale -->
           <button
             type="button"
-            @click="outBoundPallet.removeOrder(orderOnPallet.barcodeValue)"
+            @click="palletStore.removeOrder(orderOnPallet.barcode)"
             class="btn btn-danger delete-button"
           >
             <font-awesome-icon :icon="['fas', 'trash']" />
@@ -93,11 +99,13 @@
         type="button"
         class="btn btn-primary mt-3"
         @click="closePallet"
-        v-if="outBoundPallet.orders.length !== 0"
+        v-if="palletStore.orders.length !== 0"
         >
         <font-awesome-icon :icon="['fas', 'check-circle']" />
         {{ $t('palletClosure.closureButton') }}
       </button>
+
+      <modalOrderInfo :show="modalVisible" :senderID="sender_ID" :receiveID="receiver_ID"></modalOrderInfo>
     </div>
 </template>
 

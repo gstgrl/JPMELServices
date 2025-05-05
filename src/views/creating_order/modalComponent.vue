@@ -5,7 +5,6 @@
     import { useClients } from '@/services/supabaseFunctions/clients'
 
     const props = defineProps({
-        modalId: { type: String, required: true },
         title: { type: String, default: 'Titolo' },
         modalType: { type: String, required: true }
     })
@@ -23,7 +22,7 @@
     const open = () => modalInstance?.show()
     const close = () => modalInstance?.hide()
 
-    defineExpose({ open, close })
+    defineExpose({ open })
 
     const saveClients = async() => {
       close()
@@ -32,7 +31,7 @@
 </script>
 
 <template>
-    <div class="modal fade" :id="modalId" tabindex="-1" aria-hidden="true" ref="modalRef">
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true" ref="modalRef">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">

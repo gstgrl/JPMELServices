@@ -1,7 +1,5 @@
 // src/stores/orderStore.js
 import { defineStore } from 'pinia';
-import { db } from "@/services/firebase";
-import { collection, getDoc, doc, setDoc } from "firebase/firestore";
 
 export const useOrderStore = defineStore('orderStore', {
   state: () => ({
@@ -34,6 +32,7 @@ export const useOrderStore = defineStore('orderStore', {
         package_number: 1,
         sender_id: '',
         receiver_id: '',
+        addToPallet: false
     },
   }),
 
@@ -68,7 +67,37 @@ export const useOrderStore = defineStore('orderStore', {
         this.currentOrder[type].addressInfo.city = ''
         this.currentOrder[type].addressInfo.province = ''
         this.currentOrder[type].addressInfo.zipCode = '' 
-        
+    },
+
+    resetOrder() {
+        for(let key in this.currentOrder.receiver) {
+            if(key != 'addressInfo') {
+                this.currentOrder.receiver[key] = ''
+            }
+        }
+
+        for(let key in this.currentOrder.sender) {
+            if(key != 'addressInfo') {
+                this.currentOrder.sender[key] = ''
+            }
+        }
+
+        this.currentOrder.receiver.addressInfo.address = ''
+        this.currentOrder.receiver.addressInfo.city = ''
+        this.currentOrder.receiver.addressInfo.province = ''
+        this.currentOrder.receiver.addressInfo.zipCode = ''
+
+        this.currentOrder.sender.addressInfo.address = ''
+        this.currentOrder.sender.addressInfo.city = ''
+        this.currentOrder.sender.addressInfo.province = ''
+        this.currentOrder.sender.addressInfo.zipCode = ''
+
+        this.currentOrder.barcode = ''
+        this.currentOrder.package_number = 1
+        this.currentOrder.receiver_id = ''
+        this.currentOrder.sender_id = ''
+
+        this.currentOrder.addToPallet = false
     }
   },
 });
