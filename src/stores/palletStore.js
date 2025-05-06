@@ -1,23 +1,21 @@
 import { defineStore } from "pinia";
-import { useAuthStore } from '@/stores/auth';
-import { useOrderStore } from "./orderStore";
-import { updateOrder } from "@/services/updates";
-
+import { ref } from "vue";
 import { useOrders } from "@/services/supabaseFunctions/orders";
-import { v4 as uuidv4 } from 'uuid'; // Per generare un ID univoco
-import QRCode from 'qrcode'; // Importa la libreria qrcode
 import { usePallets } from "@/services/supabaseFunctions/pallets";
+import QRCode from 'qrcode'; // Importa la libreria qrcode
 
 export const usePalletStore = defineStore("palletStore", {
   state: () => ({
+    availableOrders: [],
     orders: [],
     barcodes: [],
-    palletId: null
+    palletId: null,
+    orderChecked: {}
   }),
   actions: {
     async closePallet() {
         if(!this.palletId) {
-            const {data: palletData, error: palletError} = await usePallets().createPallet({status: 'Loading'})
+            const {data: palletData, error: palletError} = await usePallets().createPallet({status: 'Closed'})
             
 
             if(palletError || !palletData) {
@@ -55,17 +53,20 @@ export const usePalletStore = defineStore("palletStore", {
         })
     },
 
-    async addOrder(barcode) {
-        const { data: orderData, error: orderError } = await useOrders().getOrder(barcode, 1)
-        const orderID = orderData.id
+    async addOrder(order) {
 
-        if(orderError || !orderData) {
-            console.error("Errore durante l'aggiunta dell’ordine:", orderError)
-            return
+        this.orders.push(order)
+        this.barcodes.push(order.barcode)
+    },
+
+    checkAvailability(barcodeToCheck) {
+        const exists = this.availableOrders.some(order => order.barcode === barcodeToCheck);
+        
+        if(exists) {
+            return true
+        } else {
+            return false
         }
-
-        this.orders.push(orderData)
-        this.barcodes.push(orderData.barcode)
     },
 
     checkAlreadyIn(barcode) {
@@ -81,7 +82,7 @@ export const usePalletStore = defineStore("palletStore", {
         this.orders = []
         this.palletId = null
         this.barcodes = []
+        this.availableOrders = []
     }
-  },
-  persist: true,
+  }
 });

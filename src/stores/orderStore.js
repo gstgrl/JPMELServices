@@ -34,6 +34,7 @@ export const useOrderStore = defineStore('orderStore', {
         receiver_id: '',
         addToPallet: false
     },
+    triggerAction: false
   }),
 
   actions: {
@@ -98,6 +99,7 @@ export const useOrderStore = defineStore('orderStore', {
         this.currentOrder.sender_id = ''
 
         this.currentOrder.addToPallet = false
+        this.triggerAction = false
     }
-  },
+  }
 });

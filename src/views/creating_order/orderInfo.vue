@@ -43,6 +43,7 @@
             return
         }
 
+        orderStore.triggerAction = true
         barcode.value = ''
         generatedBarcode.value = false
         orderStore.resetOrder()  

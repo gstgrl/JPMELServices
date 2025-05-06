@@ -5,10 +5,9 @@
     import orderInfo from "./orderInfo.vue";
     import { useOrderStore } from "@/stores/orderStore";
 
-    
     const modal = ref(null)
 
-    const modalType = ref('sender')
+    const modalType = ref('')
     const modalTitle = ref('')
     const orderStore = useOrderStore()
 
@@ -84,7 +83,7 @@
 
     
 
-    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" :modal-type="modalType"/>
+    <modalComponent ref="modal" modal-id="dettagliModal" :title="modalTitle" :modal-type="modalType" v-if="modalType"/>
   </template>
 
 

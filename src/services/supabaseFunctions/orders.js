@@ -2,9 +2,15 @@
 import { supabase } from "../supabase"
 
 export function useOrders() {
-  const getOrders = async () => {
-    const { data, error } = await supabase.from("orders").select("*")
-    return { data, error }
+  const getOrders = async (status=null) => {
+    if(status) {
+      const { data, error } = await supabase.from("orders").select("*").eq("status", status)
+      return { data, error }
+
+    } else {
+      const { data, error } = await supabase.from("orders").select("*")
+      return { data, error }
+    }
   }
 
   const getOrder = async (barcode, status=null) => {

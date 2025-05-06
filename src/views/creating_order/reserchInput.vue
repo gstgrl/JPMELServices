@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, watch } from 'vue'
     import { useClients } from '@/services/supabaseFunctions/clients'  // Importa la funzione useClients
     import { useOrderStore } from '@/stores/orderStore'
 
@@ -55,7 +55,11 @@
         orderStore.deleteInfo(props.inputType)
     }
 
-    defineExpose({ deselectClient })
+    watch(() => orderStore.triggerAction, (newVal) => {
+        if(newVal) {
+            deselectClient()
+        }
+    })
 </script>
 
 <template>

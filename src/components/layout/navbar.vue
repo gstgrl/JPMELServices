@@ -104,14 +104,14 @@
     }
 
     @media (min-width: 992px) {
-    .btn-danger {
+      .btn-danger {
         margin-left: auto;
-    }
+      }
     }
 
     @media (max-width: 991px) {
-    .btn-danger {
+      .btn-danger {
         margin-top: 0.5rem;
-    }
+      }
     }
 </style>

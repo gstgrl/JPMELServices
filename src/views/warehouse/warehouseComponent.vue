@@ -67,7 +67,7 @@
             </ul>
         </div>
 
-        <Popup ref="popup" />
+        <Popup ref="popup"/>
     </div>
 </template>
 

@@ -1,34 +1,34 @@
 <script setup>
-    import { onMounted, ref } from 'vue'
-    import { Modal } from 'bootstrap'
-    import { useOrderStore } from '@/stores/orderStore'
-    import { useClients } from '@/services/supabaseFunctions/clients'
+  import { onMounted, ref } from 'vue'
+  import { Modal } from 'bootstrap'
+  import { useOrderStore } from '@/stores/orderStore'
+  import { useClients } from '@/services/supabaseFunctions/clients'
 
-    const orderStore = useOrderStore()
+  const orderStore = useOrderStore()
 
-    const props = defineProps({
-        title: { type: String, default: 'Titolo' },
-        modalType: { type: String, required: true }
-    })
+  const props = defineProps({
+    title: { type: String, default: 'Titolo' },
+    modalType: { type: String, required: true }
+  })
 
-    const modalRef = ref(null)
-    let modalInstance = null
+  const modalRef = ref(null)
+  let modalInstance = null
 
-    onMounted(() => {
-      if (modalRef.value) {
-          modalInstance = new Modal(modalRef.value)
-      }
-    })
-
-    const open = () => modalInstance?.show()
-    const close = () => modalInstance?.hide()
-
-    defineExpose({ open })
-
-    const saveClients = async() => {
-      close()
-      await useClients().createClient(orderStore.currentOrder[props.modalType])
+  onMounted(() => {
+    if (modalRef.value) {
+      modalInstance = new Modal(modalRef.value)
     }
+  })
+
+  const open = () => modalInstance?.show()
+  const close = () => modalInstance?.hide()
+
+  const saveClients = async() => {
+    close()
+    await useClients().createClient(orderStore.currentOrder[props.modalType])
+  }
+
+  defineExpose({ open })
 </script>
 
 <template>
@@ -40,7 +40,7 @@
           <button class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi" @click="close"></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form @submit.prevent="saveClients">
             <div class="form-floating mb-3">
               <input
                     type="text"
@@ -65,7 +65,7 @@
             </div>
             <div class="form-floating mb-3">
               <input
-                    type="text"
+                    type="email"
                     class="form-control m-1"
                     v-model="orderStore.currentOrder[props.modalType].email"
                     placeholder="Email"
@@ -76,7 +76,7 @@
             </div>
             <div class="form-floating mb-3">
               <input
-                    type="phone"
+                    type="tel"
                     class="form-control m-1"
                     v-model="orderStore.currentOrder[props.modalType].phone"
                     :placeholder="$t('orderCreation.phoneNumber')"
@@ -129,14 +129,12 @@
                 />
               <label :for="`floatingInput-${modalType}-zipCode`">{{ $t('orderCreation.zipCode') }}</label>
             </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <slot name="footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="saveClients">
+
+            
+            <button type="submit" class="btn btn-secondary">
               Salva e chiudi
             </button>
-          </slot>
+          </form>
         </div>
       </div>
     </div>
