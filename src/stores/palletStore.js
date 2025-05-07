@@ -37,22 +37,6 @@ export const usePalletStore = defineStore("palletStore", {
         }
     },
 
-    generateQrCode() {
-        QRCode.toDataURL(this.palletId, { width: 200 }, (err, url) => {
-            if (err) {
-                console.error('Errore nella generazione del QR Code:', err);
-                return;
-            }
-            
-            // Puoi usare `url` per salvare l'immagine in Firebase o per scaricarla
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'pallet-qrcode.png';
-            link.click();
-            alert('QR Code generato e immagine scaricata!');
-        })
-    },
-
     async addOrder(order) {
 
         this.orders.push(order)
@@ -83,6 +67,8 @@ export const usePalletStore = defineStore("palletStore", {
         this.palletId = null
         this.barcodes = []
         this.availableOrders = []
+        this.orderChecked = {}   
     }
-  }
+  },
+  persist: true
 });

@@ -1,18 +1,16 @@
 <script setup>
     import { nextTick, ref } from 'vue';
     import JsBarcode from 'jsbarcode';
-    import { generateNumericBarcode } from '@/services/generateBarcode';
+    import { generateNumericBarcode } from '@/services/generateCodes';
 
     import { usePalletStore } from '@/stores/palletStore';
     import { useOrderStore } from '@/stores/orderStore';
     import { useOrders } from '@/services/supabaseFunctions/orders';
-    import { usePallets } from '@/services/supabaseFunctions/pallets';
 
     const generatedBarcode = ref(false)
     const barcode = ref('')
 
     const orderStore = useOrderStore()
-    const palletStore = usePalletStore()
 
     const generateBarcode = async() => {
         barcode.value = generateNumericBarcode()

@@ -1,9 +1,9 @@
 <script setup>
     import { ref, nextTick } from "vue";
+    import { useOrderStore } from "@/stores/orderStore";
     import modalComponent from "./modalComponent.vue";
     import reserchInput from "./reserchInput.vue";
     import orderInfo from "./orderInfo.vue";
-    import { useOrderStore } from "@/stores/orderStore";
 
     const modal = ref(null)
 
