@@ -2,9 +2,17 @@
 import { supabase } from "../supabase"
 
 export function useOrders() {
-  const getOrders = async (status=null) => {
+  const getOrders = async (status=null, palletID=null) => {
     if(status) {
       const { data, error } = await supabase.from("orders").select("*").eq("status", status)
+      return { data, error }
+
+    } else if(palletID) {
+      const { data, error } = await supabase.from("orders").select("*").eq("pallet_id", palletID)
+      return { data, error }
+
+    } else if(palletID && status) {
+      const { data, error } = await supabase.from("orders").select("*").eq("pallet_id", palletID).eq("status", status)
       return { data, error }
 
     } else {
@@ -28,12 +36,16 @@ export function useOrders() {
     return { data, error }
   }
 
-  const updateOrder = async (id=null, barcode=null, updates) => {
+  const updateOrder = async (id=null, barcode=null, palletID=null, updates) => {
     if(barcode) {
       const { data, error } = await supabase.from("orders").update(updates).eq("barcode", barcode)
       return { data, error }
 
-    }else {
+    } else if(palletID) {
+      const { data, error } = await supabase.from("orders").update(updates).eq("pallet_id", palletID)
+      return { data, error }
+
+    } else  {
       const { data, error } = await supabase.from("orders").update(updates).eq("id", id)
       return { data, error }
 

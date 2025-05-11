@@ -38,7 +38,6 @@ export const usePalletStore = defineStore("palletStore", {
     },
 
     async addOrder(order) {
-
         this.orders.push(order)
         this.barcodes.push(order.barcode)
     },

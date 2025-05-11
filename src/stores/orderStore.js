@@ -99,6 +99,9 @@ export const useOrderStore = defineStore('orderStore', {
         this.currentOrder.sender_id = ''
 
         this.currentOrder.addToPallet = false
+    },
+
+    resetTrigger() {
         this.triggerAction = false
     }
   }

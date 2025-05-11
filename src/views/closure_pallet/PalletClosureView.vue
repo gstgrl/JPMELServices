@@ -43,10 +43,10 @@
     for(let order of palletStore.orders) {
       if(!order.barcode) continue;
 
-      const {data, error: orderError} = await useOrders().updateOrder(null, order.barcode, {pallet_id: palletStore.palletId, status: 2})
+      const {data, error: orderError} = await useOrders().updateOrder(null, order.barcode, null, {pallet_id: palletStore.palletId, status: 2})
 
       if(orderError) {
-        console.error(`Errore aggiornando l'ordine ${order.barcode}:`, errorUpdate)
+        console.error(`Errore aggiornando l'ordine ${order.barcode}:`, orderError)
       }
     }
 
@@ -109,7 +109,7 @@
   <div class="container">
     <div class="row" v-if="palletStore.palletId">
       <div class="form-floating my-3 mx-auto barcode-input-row">
-        <input type="text" class="form-control" id="barcodeInput" placeholder="barcode" v-model="barcodeFromInput" @keyup.enter="pushOrder(barcodeFromInput)">
+        <input type="text" class="form-control" id="barcodeInput" placeholder="barcode" v-model="barcodeFromInput" @keyup.enter="pushOrder()">
         <label for="barcodeInput">Barcode</label>
       </div>
     </div>

@@ -44,7 +44,11 @@
         orderStore.triggerAction = true
         barcode.value = ''
         generatedBarcode.value = false
+
+        await nextTick()
+        
         orderStore.resetOrder()  
+        orderStore.resetTrigger()
     }
 
 

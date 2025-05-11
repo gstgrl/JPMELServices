@@ -2,9 +2,15 @@
 import { supabase } from "../supabase"
 
 export function usePallets() {
-  const getPallets = async () => {
-    const { data, error } = await supabase.from("pallets").select("*")
-    return { data, error }
+  const getPallets = async (status=null) => {
+    if(status) {
+      const { data, error } = await supabase.from("pallets").select("*").eq("status", status)
+      return { data, error }
+
+    } else {
+      const { data, error } = await supabase.from("pallets").select("*")
+      return { data, error }
+    }
   }
 
   const getPallet = async (id) => {
@@ -27,11 +33,23 @@ export function usePallets() {
     return { data, error }
   }
 
+  const returnPalletStatus = async (id) => {
+    const { data, error } = await supabase.from("pallets").select("*").eq("id", id).single()
+
+    if(error) {
+      console.error("Errore nel recupero del pallet:", error)
+      return
+    }
+
+    return data?.status === 'closed'
+  }
+
   return {
     getPallets,
     getPallet,
     createPallet,
     updatePallet,
-    deletePallet
+    deletePallet,
+    returnPalletStatus
   }
 }
