@@ -6,6 +6,7 @@
   import { useOrders } from '@/services/supabaseFunctions/orders';
   import { useClients } from '@/services/supabaseFunctions/clients';
   import { usePallets } from '@/services/supabaseFunctions/pallets';
+  import { useStatusLog } from '@/services/supabaseFunctions/statusLog';
 
   //Components
   import modalAddOrders from './modalAddOrders.vue';
@@ -22,11 +23,11 @@
   const openCreationPalletModal = async(status) => {
     if(status == 'create') {
       const {data: palletData, error: palletError} = await usePallets().createPallet({status: 'draft'})
-      if(palletData) {
-        palletStore.palletId = palletData.id
-        modal.value.open()
-      }
+      if(palletError)  throw new Error(`Error during pallet creation action: ${palletError.message}`)
 
+      palletStore.palletId = palletData.id
+      modal.value.open()
+      
     } else {
       modal.value.open()
     }
@@ -34,20 +35,17 @@
 
   const closePallet = async() => {
     const {data: palletData, error: palletError} = await usePallets().updatePallet(palletStore.palletId, {status: 'closed'})
-
-    if(palletError) {
-      console.error(palletError)
-      return
-    }
+    if(palletError)  throw new Error(`Error during pallet closure action: ${palletError.message}`)
 
     for(let order of palletStore.orders) {
       if(!order.barcode) continue;
+      
+      const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, order.barcode, null, {pallet_id: palletStore.palletId, status: 2})
+      if(errorUpdate)  throw new Error(`Error during update order info: ${errorUpdate.message}`)
 
-      const {data, error: orderError} = await useOrders().updateOrder(null, order.barcode, null, {pallet_id: palletStore.palletId, status: 2})
-
-      if(orderError) {
-        console.error(`Errore aggiornando l'ordine ${order.barcode}:`, orderError)
-      }
+      //Creo un nuovo log di stato avanzamento consegna
+      const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: dataOrder.id, barcode: order.barcode, status: 'Order shipped by sea'})
+      if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
     }
 
     generateQrCode(palletStore.palletId)

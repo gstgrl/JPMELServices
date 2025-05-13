@@ -1,14 +1,16 @@
 <script setup>
   import { RouterView } from "vue-router";
-  import navbar from "@/components/layout/navbar.vue";
   import { useAuthStore } from "./stores/auth";
+  import { useRoute } from 'vue-router'
+  import navbar from "@/components/layout/navbar.vue";
 
+  const route = useRoute()
   const authStore = useAuthStore()
 
 </script>
 
 <template>
-    <navbar v-if="!authStore.isRecovering"/>
+    <navbar v-if="!route.meta.hideNavbar"/>
     <RouterView />
 </template>
 

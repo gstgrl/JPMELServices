@@ -9,20 +9,20 @@
 
     // Filtrare gli ordini con stato 'pending'
     const pendingOrders = computed(() => {
-        return deliveryPoolStore.ordersPoolItem.filter(order => order.data.deliveryStatus === 'pending');
-    });
-
-    const deliveredOrders = computed(() => {
-        return deliveryPoolStore.ordersPoolItem.filter(order => order.data.deliveryStatus === 'delivered');
+        return deliveryPoolStore.ordersPool.filter(order => order.delivery_status === 'warehouse');
     });
 
     const rescheduledOrders = computed(() => {
-        return deliveryPoolStore.ordersPoolItem.filter(order => order.data.deliveryStatus === 'rescheduled');
+        return deliveryPoolStore.ordersPool.filter(order => order.delivery_status === 'rescheduled');
+    });
+
+    const deliveredOrders = computed(() => {
+        return deliveryPoolStore.ordersPool.filter(order => order.delivery_status === 'delivered');
     });
 
     const toWarehouse = async() => {
-        router.push('/warehouse')
         await deliveryPoolStore.returnToWarehouse()
+        router.push('/warehouse')
     }
 </script>
 
@@ -35,23 +35,21 @@
     <div class="container">
         <h6 class="order-title my-2">📦 {{ $t('delivery.titles.orderToDeliver') }}:</h6>
         <div v-for="(order, index) in pendingOrders" :key="index" class="order-item">
-            <deliveryOrderCard :item="order" />
+            <deliveryOrderCard :item="order"/>
         </div>
 
         <hr>
 
         <h6 class="order-title mb-2">📦 Ordini Riprogrammati:</h6> 
-
         <div v-for="(order, index) in rescheduledOrders" :key="index" class="order-item">
-            <deliveryOrderCard :item="order" />
+            <deliveryOrderCard :item="order"/>
         </div>
 
         <hr>
 
         <h6 class="order-title mb-2">📦 {{ $t('delivery.titles.orderDelivered') }}:</h6>
-
         <div v-for="(order, index) in deliveredOrders" :key="index" class="order-item">
-            <deliveryOrderCard :item="order" />
+            <deliveryOrderCard :item="order"/>
         </div>
     </div>
 </template>

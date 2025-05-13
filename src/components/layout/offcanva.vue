@@ -23,8 +23,8 @@
         await authStore.logout()
         
         orderStore.resetOrder()
-        warehouseStore.resetWarehouseStore()
-        deliveryPoolStore.resetPool()
+        warehouseStore.resetPinia()
+        deliveryPoolStore.resetPinia()
         palletStore.resetPalletStore()
 
         router.push('/login');

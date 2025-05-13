@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import { useOrders } from "@/services/supabaseFunctions/orders";
 import { usePallets } from "@/services/supabaseFunctions/pallets";
-import QRCode from 'qrcode'; // Importa la libreria qrcode
 
 export const usePalletStore = defineStore("palletStore", {
   state: () => ({

@@ -19,11 +19,7 @@ export const useWareHouseStore = defineStore("wareHouse", {
 
         if(palletID) {
             const {data: fetchData, error: fetchError} = await useOrders().getOrders(3, palletID)
-
-            if(fetchError) {
-                console.error(fetchError)
-                return
-            }
+            if(fetchError)  throw new Error(`Error during fetch action: ${fetchError.message}`)
 
             ordersArray = fetchData
         }
@@ -34,11 +30,7 @@ export const useWareHouseStore = defineStore("wareHouse", {
 
         for(let order of ordersArray) {
             const {data: receiverData, error: receiverError} = await useClients().getClient(order.receiver_id)
-            
-            if(receiverError) {
-                console.error(receiverError)
-                return
-            }
+            if(receiverError)  throw new Error(`Error during fetch receiver data action: ${receiverError.message}`)
 
             let singleOrder = {
                 barcode: order.barcode,
@@ -117,8 +109,14 @@ export const useWareHouseStore = defineStore("wareHouse", {
 
     //Methods used for manage variables of this pinia
     resetPinia() {
-        
-    }
+        this.ordersChecked = {}
+        this.ordersDischarged = []
+        this.ordersSelected = []
+        this.provinces = []
+        this.cities = []
+        this.filteredOrders = []
+        this.citiesByProvince = {}
+    },
   },
   persist: true
 });

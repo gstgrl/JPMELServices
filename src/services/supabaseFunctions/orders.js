@@ -32,21 +32,21 @@ export function useOrders() {
   }
 
   const createOrder = async (order) => {
-    const { data, error } = await supabase.from("orders").insert([order]).select()
+    const { data, error } = await supabase.from("orders").insert([order]).select().single()
     return { data, error }
   }
 
   const updateOrder = async (id=null, barcode=null, palletID=null, updates) => {
     if(barcode) {
-      const { data, error } = await supabase.from("orders").update(updates).eq("barcode", barcode)
+      const { data, error } = await supabase.from("orders").update(updates).eq("barcode", barcode).select().single()
       return { data, error }
 
     } else if(palletID) {
-      const { data, error } = await supabase.from("orders").update(updates).eq("pallet_id", palletID)
+      const { data, error } = await supabase.from("orders").update(updates).eq("pallet_id", palletID).select()
       return { data, error }
 
     } else  {
-      const { data, error } = await supabase.from("orders").update(updates).eq("id", id)
+      const { data, error } = await supabase.from("orders").update(updates).eq("id", id).select().single()
       return { data, error }
 
     }

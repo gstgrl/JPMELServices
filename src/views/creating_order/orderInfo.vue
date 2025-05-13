@@ -3,9 +3,9 @@
     import JsBarcode from 'jsbarcode';
     import { generateNumericBarcode } from '@/services/generateCodes';
 
-    import { usePalletStore } from '@/stores/palletStore';
     import { useOrderStore } from '@/stores/orderStore';
     import { useOrders } from '@/services/supabaseFunctions/orders';
+    import { useStatusLog } from '@/services/supabaseFunctions/statusLog';
 
     const generatedBarcode = ref(false)
     const barcode = ref('')
@@ -31,15 +31,16 @@
             barcode: orderStore.currentOrder.barcode,
             sender_id: orderStore.currentOrder.sender_id,
             receiver_id: orderStore.currentOrder.receiver_id,
-            package_number: orderStore.currentOrder.package_number
+            package_number: orderStore.currentOrder.package_number,
+            status: 1
         }
 
         const { data: orderData, error: orderError } = await useOrders().createOrder(orderToSend)
+        if(orderError) throw new Error(`Error during order creation: ${orderError.message}`)
 
-        if (orderError || !orderData?.length) {
-            console.error('Errore durante la creazione dell’ordine:', orderError)
-            return
-        }
+        //Creo un nuovo log di stato avanzamento consegna
+        const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: orderData.id, barcode: orderData.barcode, status: 'We are processing your order!'})
+        if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
 
         orderStore.triggerAction = true
         barcode.value = ''

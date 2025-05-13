@@ -13,18 +13,20 @@ import OrderCreationView from '@/views/creating_order/OrderCreationView.vue';
 import PalletClosureView from '@/views/closure_pallet/PalletClosureView.vue';
 import WareHouseView from '@/views/warehouse/WareHouseView.vue';
 import OrderDeliveryManagmentView from '@/views/delivery_view/OrderDeliveryManagmentView.vue';
+import CustomerView from '@/views/customer/CustomerView.vue';
 
 
 const routes = [
-  {path: '/login', component: LoginView},
-  {path: '/forgot', component: forgotPassword},
+  {path: '/customer', component: CustomerView, meta: { hideNavbar: true}},
+  {path: '/login', component: LoginView, meta: { hideNavbar: false}},
+  {path: '/forgot', component: forgotPassword, meta: { hideNavbar: false}},
   {path: '/reset-password', component: resetPassword, meta: { hideNavbar: true}},
-  {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true}},
-  {path: "/createUser", component: CreateUser, meta: { requiresAuth: true}},
-  {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true}},
-  {path: "/closePallet", component: PalletClosureView, meta: { requiresAuth: true}},
-  {path: "/warehouse", component: WareHouseView, meta: { requiresAuth: true}},
-  {path: "/delivery", component: OrderDeliveryManagmentView, meta: { requiresAuth: true}},
+  {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/createUser", component: CreateUser, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/closePallet", component: PalletClosureView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/warehouse", component: WareHouseView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/delivery", component: OrderDeliveryManagmentView, meta: { requiresAuth: true, hideNavbar: false}},
 ];
 
 const router = createRouter({

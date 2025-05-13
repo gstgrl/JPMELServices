@@ -1,11 +1,15 @@
 <script setup>
     import { usePallets } from '@/services/supabaseFunctions/pallets';
     import { useOrders } from '@/services/supabaseFunctions/orders';
-    import { useClients } from '@/services/supabaseFunctions/clients';
+    import { useStatusLog } from '@/services/supabaseFunctions/statusLog';
+    import { useDeliveryPool } from '@/stores/deliveryPoolStore';
     import { useWareHouseStore } from '@/stores/warehouseStore';
     import { ref, onMounted, watch } from 'vue';
+    import { useRouter } from 'vue-router';
 
     const warehouseStore = useWareHouseStore()
+    const deliveryPoolStore = useDeliveryPool()
+    const router = useRouter()
 
     const palletIDFromInput = ref('')
     const filters = ref({
@@ -16,11 +20,7 @@
     //Vue methods
     onMounted(async() => {
         const {data: orders, error: errorOrders} = await useOrders().getOrders(3, null)
-
-        if(errorOrders) {
-            console.error(errorOrders)
-            return
-        }
+        if(errorOrders)  throw new Error(`Error during fetching orders: ${errorOrders.message}`)
 
         await warehouseStore.fetchOrders(null, orders)
     })
@@ -45,8 +45,18 @@
             return
         }
 
-        await usePallets().updatePallet(palletIDFromInput.value, {status: 'discharged'})
-        await useOrders().updateOrder(null, null, palletIDFromInput.value, {status: 3})
+        const {data: palletData, error: palletError} = await usePallets().updatePallet(palletIDFromInput.value, {status: 'discharged'})
+        if(palletError)  throw new Error(`Error during pallet discharging action: ${palletError.message}`)
+
+        const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, null, palletIDFromInput.value, {status: 3})
+        if(errorUpdate)  throw new Error(`Error during update order info: ${errorUpdate.message}`)
+
+        for(let order of dataOrder) {
+            //Creo un nuovo log di stato avanzamento consegna
+            const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: order.id, barcode: order.barcode, status: 'Order arrived in Domenican Republic'})
+            if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+        }
+
         await warehouseStore.fetchOrders(palletIDFromInput.value, null)
         palletIDFromInput.value = ''
     }
@@ -66,8 +76,10 @@
         }
     }
 
-    const pushToDelivery = () => {
-        console.log(warehouseStore.ordersSelected)
+    const pushToDelivery = async() => {
+        router.push('/delivery')
+        await deliveryPoolStore.startDelivery(warehouseStore.ordersSelected)
+        warehouseStore.resetPinia()
     }
 </script>
 

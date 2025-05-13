@@ -1,91 +1,63 @@
 import { defineStore } from "pinia";
-import { useOrderStore } from "./orderStore";
-import { updateOrder } from "@/services/updates";
+import { useOrders } from '@/services/supabaseFunctions/orders'
+import { useStatusLog } from '@/services/supabaseFunctions/statusLog'
 
 export const useDeliveryPool = defineStore("deliveryPoolStore", {
   state: () => ({
     ordersPool: [], //Array di barcodes, indica quali ordini sono presenti per la consegna
-    orderNumber: 0,
-
-    //Fase di consegna
-    onDelivery: false, 
-    ordersPoolItem: []
   }),
   actions: {
-    addOrderToPool(barcode) {
-      this.orderNumber++;
-      this.ordersPool.push(barcode)
-    },
+    async startDelivery(orders) {
 
-    removeOrderFromPool(barcode) {
-      this.orderNumber--;
-      this.ordersPool = this.ordersPool.filter(item => item !== barcode);
-    },
+      for(let order of orders) {
+        const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, order.barcode, null, {status: 4})
+        if(errorUpdate)  throw new Error(`Error during returning order to warehouse: ${errorUpdate.message}`)
 
-    async startDelivery() {
-      const orderStore = useOrderStore()
+        //Creo un nuovo log di stato avanzamento consegna
+        const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: dataOrder.id, barcode: order.barcode, status: 'In delivery'})
+        if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
 
-      for (const barcode of this.ordersPool) {
-        try {
-          const found = await orderStore.fetchOrderByBarcode(barcode, 3);
-      
-          if (found) {
-            const order = { data: orderStore.order, barcode };
-            await updateOrder(barcode, 'In delivery', 1, null, null, null)
-            orderStore.resetOrder();
-            this.ordersPoolItem.push(order);
-
-          } else {
-            console.warn(`⚠️ Ordine non trovato per il barcode: ${barcode}`);
-          }
-        } catch (error) {
-          console.error(`❌ Errore durante il processo per ${barcode}:`, error);
-        }
+        this.ordersPool.push(order)
       }
-      this.ordersPool = []
-      this.onDelivery = true
-      this.orderNumber = 0
-    },
-
-    async updateBadgeStatusOrder(order, newStatus, incrementRate, deliveryStatus, signature) {
-
-      const index = this.ordersPoolItem.findIndex(item => item.barcode === order.barcode)
-
-      if(index != -1) {
-        this.ordersPoolItem[index].data.deliveryStatus = deliveryStatus
-        await updateOrder(order.barcode, newStatus, incrementRate, null, deliveryStatus, signature)
-      }
-    },
-
-    async orderDeliveredFunction(order, signature) {
-      await this.updateBadgeStatusOrder(order, "Delivered", 1, 'delivered', signature)
-    },
-
-    async orderRescheduled(order) {
-      await this.updateBadgeStatusOrder(order, 'Rescheduled', -1, 'rescheduled', null)
-    },
-
-    async orderReturned(order) {
-      await this.updateBadgeStatusOrder(order, 'Returned to Warehouse', -1, 'pending', null)
     },
 
     async returnToWarehouse() {
-      this.onDelivery = false
+      for(let order of this.ordersPool) {
+        if(order.delivery_status != 'delivered') {
+          const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, order.barcode, null, {status: 3})
+          if(errorUpdate)  throw new Error(`Error during returning order to warehouse: ${errorUpdate.message}`)
 
-      for(const item of this.ordersPoolItem) {
-        if(item.data.deliveryStatus == 'pending') {
-          await this.orderRescheduled(item)
+          //Creo un nuovo log di stato avanzamento consegna
+          const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: dataOrder.id, barcode: order.barcode, status: 'Returned to Warehouse'})
+          if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+
         }
       }
-
-      this.ordersPoolItem = [];
+      
+      this.resetPinia()
     },
 
-    resetPool() {
-      this.ordersPool = [];
-      this.orderNumber = 0;
-      this.onDelivery = false;
-      this.ordersPoolItem = [];
+    updateBadge(barcode, deliveryStatus) {
+      const index = this.ordersPool.findIndex(item => item.barcode === barcode)
+
+      if(index != -1) {
+        this.ordersPool[index].delivery_status = deliveryStatus
+      }
+    },
+
+    async orderDelivered(barcode) {
+      //Aggiorno lo stato dell'ordine 
+      const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, barcode, null, {status: 5})
+      if(errorUpdate)  throw new Error(`Error during updating order: ${errorUpdate.message}`)
+
+      //Creo un nuovo log di stato avanzamento consegna
+      const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: dataOrder.id, barcode: barcode, status: 'Delivered'})
+      if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+      
+    },
+
+    resetPinia() {
+      this.ordersPool = []
     }
   },
   persist: true
