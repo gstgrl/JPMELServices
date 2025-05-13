@@ -14,24 +14,14 @@ export const usePalletStore = defineStore("palletStore", {
     async closePallet() {
         if(!this.palletId) {
             const {data: palletData, error: palletError} = await usePallets().createPallet({status: 'Closed'})
-            
-
-            if(palletError || !palletData) {
-                console.error("Errore durante la creazione del bancale", palletError)
-                return
-            }
+            if(palletError || !palletData)  throw new Error(`Error during pallet creation action: ${palletError.message}`)
 
             this.palletId = palletData.id
         } 
 
         for (let barcode of this.barcodes) {
             const {data: orders, error: ordersError} = await useOrders().updateOrder(null, barcode, {'pallet_id': this.palletId, 'status': 2})
-
-            if (ordersError) {
-                console.error(`Errore nell'aggiornamento dell'ordine ${barcode}:`, ordersError);
-            } else {
-                console.log(`Ordine ${barcode} aggiornato con successo.`);
-            }
+            if(ordersError)  throw new Error(`Error during order update: ${ordersError.message}`)
         }
     },
 

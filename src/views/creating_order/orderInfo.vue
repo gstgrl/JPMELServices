@@ -1,16 +1,18 @@
 <script setup>
-    import { nextTick, ref } from 'vue';
     import JsBarcode from 'jsbarcode';
+    import { nextTick, ref } from 'vue';
     import { generateNumericBarcode } from '@/services/generateCodes';
 
     import { useOrderStore } from '@/stores/orderStore';
     import { useOrders } from '@/services/supabaseFunctions/orders';
     import { useStatusLog } from '@/services/supabaseFunctions/statusLog';
+    import { useToastStore } from '@/stores/toastStore';
 
     const generatedBarcode = ref(false)
     const barcode = ref('')
 
     const orderStore = useOrderStore()
+    const toastStore = useToastStore()
 
     const generateBarcode = async() => {
         barcode.value = generateNumericBarcode()
@@ -36,11 +38,17 @@
         }
 
         const { data: orderData, error: orderError } = await useOrders().createOrder(orderToSend)
-        if(orderError) throw new Error(`Error during order creation: ${orderError.message}`)
+        if(orderError) {
+            toastStore.show("Error during order creation", 'danger')
+            throw new Error(`Error during order creation: ${orderError.message}`)
+        }
 
         //Creo un nuovo log di stato avanzamento consegna
         const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: orderData.id, barcode: orderData.barcode, status: 'We are processing your order!'})
-        if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+        if(errorLog)  {
+            toastStore.show("Error during creating order delivery status history log", 'danger')
+            throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+        }
 
         orderStore.triggerAction = true
         barcode.value = ''
@@ -50,6 +58,7 @@
         
         orderStore.resetOrder()  
         orderStore.resetTrigger()
+        toastStore.show("Ordine creato", 'success')
     }
 
 

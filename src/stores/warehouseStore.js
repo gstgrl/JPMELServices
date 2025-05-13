@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useOrders } from "@/services/supabaseFunctions/orders";
 import { useClients } from "@/services/supabaseFunctions/clients";
+import { useToastStore } from "./toastStore";
 
 export const useWareHouseStore = defineStore("wareHouse", {
   state: () => ({
@@ -15,11 +16,15 @@ export const useWareHouseStore = defineStore("wareHouse", {
   }),
   actions: {
     async fetchOrders(palletID=null, orders=null) {
+        const toastStore = useToastStore()
         let ordersArray
 
         if(palletID) {
             const {data: fetchData, error: fetchError} = await useOrders().getOrders(3, palletID)
-            if(fetchError)  throw new Error(`Error during fetch action: ${fetchError.message}`)
+            if(fetchError)  {
+                toastStore.show('Error during fetch action', 'danger')
+                throw new Error(`Error during fetch action: ${fetchError.message}`)
+            }
 
             ordersArray = fetchData
         }
@@ -30,7 +35,10 @@ export const useWareHouseStore = defineStore("wareHouse", {
 
         for(let order of ordersArray) {
             const {data: receiverData, error: receiverError} = await useClients().getClient(order.receiver_id)
-            if(receiverError)  throw new Error(`Error during fetch receiver data action: ${receiverError.message}`)
+            if(receiverError)  {
+                toastStore.show('Error during fetch receiver data action', 'danger')
+                throw new Error(`Error during fetch receiver data action: ${receiverError.message}`)
+            }
 
             let singleOrder = {
                 barcode: order.barcode,

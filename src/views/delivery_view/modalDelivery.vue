@@ -27,9 +27,9 @@
     let modalInstance = null
 
     onMounted(() => {
-        if (modalRef.value) {
-            modalInstance = new Modal(modalRef.value)
-        }
+      if (modalRef.value) {
+        modalInstance = new Modal(modalRef.value)
+      }
     })
 
     const open = () => modalInstance?.show()
@@ -41,21 +41,19 @@
   
 
     const rescheduleDelivery = async () => {
-        deliveryPoolStore.updateBadge(props.barcode, 'rescheduled')
-        close()
+      deliveryPoolStore.updateBadge(props.barcode, 'rescheduled')
+      close()
     }
 
     const orderDelivered = async (result) => {
-        if(result) {
-            deliveryPoolStore.updateBadge(props.barcode, 'delivered')
-            await deliveryPoolStore.orderDelivered(props.barcode)
-            emit('order-delivered', true)
-        }
+      if(result) {
+        deliveryPoolStore.updateBadge(props.barcode, 'delivered')
+        await deliveryPoolStore.orderDelivered(props.barcode)
+        emit('order-delivered', true)
+      }
 
-        close()
+      close()
     }
-
-    console.log(props.delivery_status)
 
     defineExpose({ open })
 </script>

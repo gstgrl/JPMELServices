@@ -1,14 +1,18 @@
 <script setup>
-    import { usePallets } from '@/services/supabaseFunctions/pallets';
-    import { useOrders } from '@/services/supabaseFunctions/orders';
-    import { useStatusLog } from '@/services/supabaseFunctions/statusLog';
-    import { useDeliveryPool } from '@/stores/deliveryPoolStore';
-    import { useWareHouseStore } from '@/stores/warehouseStore';
     import { ref, onMounted, watch } from 'vue';
     import { useRouter } from 'vue-router';
 
+    import { usePallets } from '@/services/supabaseFunctions/pallets';
+    import { useOrders } from '@/services/supabaseFunctions/orders';
+    import { useStatusLog } from '@/services/supabaseFunctions/statusLog';
+
+    import { useDeliveryPool } from '@/stores/deliveryPoolStore';
+    import { useWareHouseStore } from '@/stores/warehouseStore';
+    import { useToastStore } from '@/stores/toastStore';
+
     const warehouseStore = useWareHouseStore()
     const deliveryPoolStore = useDeliveryPool()
+    const toastStore = useToastStore()
     const router = useRouter()
 
     const palletIDFromInput = ref('')
@@ -20,7 +24,10 @@
     //Vue methods
     onMounted(async() => {
         const {data: orders, error: errorOrders} = await useOrders().getOrders(3, null)
-        if(errorOrders)  throw new Error(`Error during fetching orders: ${errorOrders.message}`)
+        if(errorOrders)  {
+            toastStore.show('Error during fetching order', 'danger')
+            throw new Error(`Error during fetching orders: ${errorOrders.message}`)
+        }
 
         await warehouseStore.fetchOrders(null, orders)
     })
@@ -32,33 +39,43 @@
     //Implemented methods
     const pushPallet = async() => {
         if(!palletIDFromInput.value) {
+            toastStore.show('Inserire un codice pallet valido!', 'warning')
             palletIDFromInput.value = ''
-            window.alert("Inserire un codice pallet valido!")
             return
         }
 
         const result = await usePallets().returnPalletStatus(palletIDFromInput.value)
 
         if(!result) {
+            toastStore.show('Bancale gia scaricato!', 'warning')
             palletIDFromInput.value = ''
-            window.alert("Bancale gia scaricato!")
             return
         }
 
         const {data: palletData, error: palletError} = await usePallets().updatePallet(palletIDFromInput.value, {status: 'discharged'})
-        if(palletError)  throw new Error(`Error during pallet discharging action: ${palletError.message}`)
+        if(palletError)  {
+            toastStore.show('Error during pallet discharging action', 'danger')
+            throw new Error(`Error during pallet discharging action: ${palletError.message}`)
+        }
 
         const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, null, palletIDFromInput.value, {status: 3})
-        if(errorUpdate)  throw new Error(`Error during update order info: ${errorUpdate.message}`)
+        if(errorUpdate)  {
+            toastStore.show('Error during update order info', 'danger')
+            throw new Error(`Error during update order info: ${errorUpdate.message}`)
+        }
 
         for(let order of dataOrder) {
             //Creo un nuovo log di stato avanzamento consegna
             const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: order.id, barcode: order.barcode, status: 'Order arrived in Domenican Republic'})
-            if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+            if(errorLog)  {
+                toastStore.show('Error during creating order delivery status history log', 'danger')
+                throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+            }
         }
 
         await warehouseStore.fetchOrders(palletIDFromInput.value, null)
         palletIDFromInput.value = ''
+        toastStore.show('Bancale scaricato correttamente', 'success')
     }
 
     const resetFilters = () => {
@@ -71,8 +88,10 @@
 
         if(isChecked) {
             warehouseStore.addOrder(order)
+            toastStore.show('Ordine agginto', 'primary', 2500)
         } else {
             warehouseStore.removeOrder(order.barcode)
+            toastStore.show('Ordine rimosso', 'primary', 2500)
         }
     }
 

@@ -1,17 +1,19 @@
 <script setup>
   import { RouterView } from "vue-router";
-  import { useAuthStore } from "./stores/auth";
   import { useRoute } from 'vue-router'
   import navbar from "@/components/layout/navbar.vue";
+  import customerNavbar from "./components/layout/customerNavbar.vue";
+  import toastContainer from "./components/ui/toastContainer.vue";
 
   const route = useRoute()
-  const authStore = useAuthStore()
 
 </script>
 
 <template>
-    <navbar v-if="!route.meta.hideNavbar"/>
+    <customerNavbar v-if="route.meta.hideNavbar"/>
+    <navbar v-else/>
     <RouterView />
+    <toastContainer />
 </template>
 
 <style>

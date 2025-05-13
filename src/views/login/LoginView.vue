@@ -2,8 +2,11 @@
     import { ref } from "vue";
     import { useRouter } from "vue-router";
     import { useAuthStore } from "@/stores/auth";
+    import { useToastStore } from "@/stores/toastStore";
 
-    const authStore = useAuthStore();
+    const authStore = useAuthStore()
+    const toastStore = useToastStore()
+
     const email = ref("")
     const password = ref("")
 
@@ -14,14 +17,15 @@
           const result = await authStore.login(email.value, password.value);  // Chiamata al login
 
           if(result) {
+            toastStore.show("Bentornato", 'success')
             router.push("/dashboard");
           } else {
             // Se il login è fallito, mostra il messaggio di errore dallo store
-            alert(authStore.errorMessage || "Credenziali errate.");
+            toastStore.show("Credenziali errate", 'warning')
           }
             
         } catch (error) {
-          alert("Si è verificato un errore durante il login.");
+          toastStore.show("Si è verificato un errore durante il login", 'danger')
         }
     };
 </script>

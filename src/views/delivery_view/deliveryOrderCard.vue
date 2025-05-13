@@ -4,10 +4,10 @@
     import modalDelivery from './modalDelivery.vue';
 
     const props = defineProps({
-        item: {
-            type: Object,
-            required: true
-        }
+      item: {
+        type: Object,
+        required: true
+      }
     });
 
     const modal = ref(null)
@@ -16,9 +16,9 @@
     const openModal = async () => {modal.value.open()}
 
     const handleDeliveredStatus = (result) => {
-        if(result) {
-            viewButton.value = false
-        }
+      if(result) {
+        viewButton.value = false
+      }
     }
 </script>
 

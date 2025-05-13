@@ -3,9 +3,11 @@
   import { supabase } from "@/services/supabase"; // Assicurati che questo punto venga configurato correttamente
   import { useRouter } from "vue-router";
   import { useAuthStore } from "@/stores/auth";
+  import { useToastStore } from "@/stores/toastStore";
 
   const router = useRouter();
   const authStore = useAuthStore()
+  const toastStore = useToastStore()
 
   const password = ref("");
   const confirmPassword = ref("");
@@ -18,29 +20,26 @@
     successMessage.value = "";
 
     if (password.value !== confirmPassword.value) {
-      errorMessage.value = "Le password non coincidono.";
+      toastStore.show('Le password non coincidono', 'warning')
       return;
     }
 
     try {
       const { error } = await supabase.auth.updateUser({ password: password.value });
+      if(error)  {
+        toastStore.show('Error during updateing user info', 'danger')
+        throw new Error(`Error during updateing user info: ${error.message}`)
+      }
 
-      if (error) {
-        errorMessage.value = error.message;
-      } 
-
-      successMessage.value = "Password modificata con successo!";
+      toastStore.show('Password modificata con successo!', 'success')
 
       await authStore.logout()
       router.push("/login");
+      
     } catch (error) {
-
-      errorMessage.value = "Errore inatteso durante il reset della password.";
-      console.error(error)
+      toastStore.show('Errore inatteso durante il reset della password', 'danger')
     }
   };
-
-  console.log(supabase)
 </script>
 
 <template>

@@ -4,37 +4,25 @@
     import { useAuthStore } from "@/stores/auth";
 
     const email = ref("");
-    const errorMessage = ref("");
-    const successMessage = ref("");
     const authStore = useAuthStore()
 
     const sendResetLink = async () => {
-    errorMessage.value = "";
-    successMessage.value = "";
+        errorMessage.value = "";
+        successMessage.value = "";
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
-        redirectTo: 'http://localhost:5173/reset-password',
-    });
-
-        if (error) {
-            errorMessage.value = error.message;
-        } else {
-            authStore.isRecovering = true
-            successMessage.value = "Controlla la tua email per il link di reset!";
+        const { error } = await supabase.auth.resetPasswordForEmail(email.value, { redirectTo: 'http://localhost:5173/reset-password'});
+        if(error)  {
+            toastStore.show('Error during resetting user password', 'danger')
+            throw new Error(`Error during resetting user password: ${error.message}`)
         }
+        
+        authStore.isRecovering = true
+        toastStore.show('Controlla la tua email per il link di reset!', 'success')
     };
 </script>
 
 <template>
     <div class="container">
-
-        <div class="alert alert-danger mt-3" role="alert" v-if="errorMessage">
-            {{ errorMessage }}
-        </div>
-
-        <div class="alert alert-success mt-3" role="alert" v-if="successMessage">
-            {{ successMessage }}
-        </div>
 
         <h2>Recupero Password</h2>
         <form @submit.prevent="sendResetLink">

@@ -13,9 +13,11 @@
 
   //Pinia Stores
   import { usePalletStore } from '@/stores/palletStore';
+  import { useToastStore } from '@/stores/toastStore';
 
   //Pinia stores intialization
   const palletStore = usePalletStore()
+  const toastStore = useToastStore()
   
   const barcodeFromInput = ref("")
   const modal = ref(null)
@@ -23,7 +25,10 @@
   const openCreationPalletModal = async(status) => {
     if(status == 'create') {
       const {data: palletData, error: palletError} = await usePallets().createPallet({status: 'draft'})
-      if(palletError)  throw new Error(`Error during pallet creation action: ${palletError.message}`)
+      if(palletError)  {
+        toastStore.show('Error during pallet creation action', 'danger')
+        throw new Error(`Error during pallet creation action: ${palletError.message}`)
+      }
 
       palletStore.palletId = palletData.id
       modal.value.open()
@@ -35,29 +40,39 @@
 
   const closePallet = async() => {
     const {data: palletData, error: palletError} = await usePallets().updatePallet(palletStore.palletId, {status: 'closed'})
-    if(palletError)  throw new Error(`Error during pallet closure action: ${palletError.message}`)
+    if(palletError)  {
+      toastStore.show('Error during pallet closure action', 'danger')
+      throw new Error(`Error during pallet closure action: ${palletError.message}`)
+    }
 
     for(let order of palletStore.orders) {
       if(!order.barcode) continue;
       
       const {data: dataOrder, error: errorUpdate} = await useOrders().updateOrder(null, order.barcode, null, {pallet_id: palletStore.palletId, status: 2})
-      if(errorUpdate)  throw new Error(`Error during update order info: ${errorUpdate.message}`)
+      if(errorUpdate)  {
+        toastStore.show('Error during update order info', 'danger')
+        throw new Error(`Error during update order info: ${errorUpdate.message}`)
+      }
 
       //Creo un nuovo log di stato avanzamento consegna
       const {data: log, error: errorLog} = await useStatusLog().createLog({order_id: dataOrder.id, barcode: order.barcode, status: 'Order shipped by sea'})
-      if(errorLog)  throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+      if(errorLog)  {
+        toastStore.show('Error during creating order delivery status history log', 'danger')
+        throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
+      }
     }
 
     generateQrCode(palletStore.palletId)
+    toastStore.show('Bancale imballato', 'success')
 
     palletStore.resetPalletStore()
   }
 
   const undoPallet = async() => {
     const {data, error: deletePalletError} = await usePallets().deletePallet(palletStore.palletId)
-
-    if(deletePalletError) {
-      console.error(`Errore nell'eleminazione del bancale ${palletStore.palletId}:`, deletePalletError)
+    if(deletePalletError)  {
+      toastStore.show('Error during pallet deleting action', 'danger')
+      throw new Error(`Error during pallet deleting action: ${deletePalletError.message}`)
     }
 
     palletStore.resetPalletStore()
@@ -65,27 +80,27 @@
 
   const pushOrder = async() => {
     if(!barcodeFromInput.value) {
+        toastStore.show('Inserisci un barcode', 'warning')
       barcodeFromInput.value = ''
-      window.alert("Inserisci un barcode!")
       return
     }
 
     if(palletStore.checkAlreadyIn(barcodeFromInput.value)) {
+        toastStore.show('Ordine gia selezionato', 'warning')
       barcodeFromInput.value = ''
-      window.alert("Ordine gia selezionato!")
       return
     }
 
     const {data: orderData, error: orderError} = await useOrders().getOrder(barcodeFromInput.value, 1)
-
-    if(orderError) {
-      console.error(orderError)
+    if(orderError)  {
+      toastStore.show('Error during fetching data', 'danger')
+      throw new Error(`Error during fetching data: ${orderError.message}`)
     }
 
     const {data: receiverData, error: receiverError} = await useClients().getClient(orderData.receiver_id)
-    
-    if(receiverError) {
-      console.error(receiverError)
+    if(receiverError)  {
+      toastStore.show('Error during fetching data', 'danger')
+      throw new Error(`Error during fetching data: ${receiverError.message}`)
     }
 
     let singleOrder = {
@@ -96,7 +111,6 @@
 
     palletStore.addOrder(singleOrder)
     palletStore.orderChecked[barcodeFromInput.value] = true
-    
 
     barcodeFromInput.value = ''
   }
