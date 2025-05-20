@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, onUnmounted } from 'vue'
-import { Html5Qrcode } from 'html5-qrcode'
+import { 
+  Html5Qrcode,
+  Html5QrcodeSupportedFormats,
+  Html5QrcodeScanType  // Aggiungi questo import
+} from 'html5-qrcode';
 
 export const useScannerStore = defineStore('scanner', () => {
   const activateScanner = ref(false)
