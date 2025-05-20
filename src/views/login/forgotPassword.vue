@@ -17,6 +17,7 @@
         }
         
         authStore.isRecovering = true
+        email.value = ''
         toastStore.show('Controlla la tua email per il link di reset!', 'success')
     };
 </script>

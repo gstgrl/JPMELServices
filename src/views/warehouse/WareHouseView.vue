@@ -1,6 +1,7 @@
 <script setup>
     import { ref, onMounted, watch } from 'vue';
     import { useRouter } from 'vue-router';
+    import scanner from '@/components/ui/scanner.vue';
 
     import { usePallets } from '@/services/supabaseFunctions/pallets';
     import { useOrders } from '@/services/supabaseFunctions/orders';
@@ -9,13 +10,18 @@
     import { useDeliveryPool } from '@/stores/deliveryPoolStore';
     import { useWareHouseStore } from '@/stores/warehouseStore';
     import { useToastStore } from '@/stores/toastStore';
+    import { useDeviceStore } from '@/stores/diveceStore';
+    import { useScannerStore } from '@/stores/cameraStore';
 
     const warehouseStore = useWareHouseStore()
     const deliveryPoolStore = useDeliveryPool()
     const toastStore = useToastStore()
+    const device = useDeviceStore()
+    const scannerStore = useScannerStore()
     const router = useRouter()
 
     const palletIDFromInput = ref('')
+    const modal = ref(null)
     const filters = ref({
         province: '',
         city: ''
@@ -33,7 +39,6 @@
     })
 
     watch(filters, () => {warehouseStore.filterOrder(filters.value)}, {deep: true, immediate: true})
-
 
 
     //Implemented methods
@@ -100,24 +105,32 @@
         await deliveryPoolStore.startDelivery(warehouseStore.ordersSelected)
         warehouseStore.resetPinia()
     }
+
+    const handleStartScanner = () => {
+        modal.value.open()
+    }
 </script>
 
 <template>
     <div class="container">
         <div class="row justify-content-between">
-            <div class="form-floating my-3  palletID-input-row">
-                <input type="text" class="form-control" id="palletID" placeholder="Pallet ID" v-model="palletIDFromInput" @keyup.enter="pushPallet">
-                <label for="palletID">Pallet ID</label>
+            <div class="d-flex input-camera-box">
+                <div class="form-floating my-3 palletID-input-row" v-if="!device.isMobile">
+                    <input type="text" class="form-control" id="palletID" placeholder="Pallet ID" v-model="palletIDFromInput" @keyup.enter="pushPallet">
+                    <label for="palletID">Pallet ID</label>
+                </div>
+            
+                <span class="btn camera-box" @click="handleStartScanner"><font-awesome-icon :icon="['fas', 'camera']" size="lg"/></span>
             </div>
 
             <div class="button-filters-div">
-                <div class="filter-div">
-                    <select class="form-select my-1" aria-label="Default select example" v-model="filters.province">
+                <div class="filter-div my-2">
+                    <select :class="{'form-select me-1': !device.isMobile, 'form-select-sm me-1': device.isMobile}" aria-label="Default select example" v-model="filters.province">
                         <option value="" selected disabled>Provincia</option>
                         <option :value="`${province}`" v-for="(province) in warehouseStore.provinces">{{ province }}</option>
                     </select>
 
-                    <select class="form-select my-1" aria-label="Default select example" v-model="filters.city">
+                    <select :class="{'form-select m-1': !device.isMobile, 'form-select-sm m-1': device.isMobile}" aria-label="Default select example" v-model="filters.city">
                         <option value="" selected disabled>Città</option>
                         <option :value="`${city}`" v-for="(city) in warehouseStore.cities" :hidden="filters.province && !warehouseStore.cityBelongsToProvince(city, filters.province)"> {{ city }} </option>
                     </select>
@@ -125,7 +138,7 @@
 
 
                 <button class="btn custom-btn" type="button" @click="resetFilters" v-if="filters.city || filters.province">
-                    <font-awesome-icon :icon="['fas', 'eraser']" />
+                    <font-awesome-icon :icon="['fas', 'eraser']"/>
                 </button>
             </div>
         </div>
@@ -190,12 +203,19 @@
                 </div>
             </div>
         </div>
+
+        
+        <scanner ref="modal"/>
     </div>
 </template>
 
 <style scoped>
   .palletID-input-row {
-    width: 50%;
+    width: 80%;
+  }
+
+  .camera-box {
+    align-self: center;
   }
 
   .card-body-order-info {
@@ -212,7 +232,7 @@
 
   .filter-div {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: fit-content;
     align-items: center;
     justify-content: center;
@@ -224,6 +244,9 @@
 
 
   @media (max-width: 450px) {
+    .input-camera-box{
+        width: fit-content;
+    }
 
     .header-info {
       display: flex;

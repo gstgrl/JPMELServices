@@ -11,8 +11,6 @@
 
   const password = ref("");
   const confirmPassword = ref("");
-  const errorMessage = ref("");
-  const successMessage = ref("");
 
   // Funzione per gestire il reset della password
   const resetPassword = async () => {
@@ -31,7 +29,7 @@
         throw new Error(`Error during updateing user info: ${error.message}`)
       }
 
-      toastStore.show('Password modificata con successo!', 'success')
+      toastStore.show('Password aggiornata con successo!', 'success')
 
       await authStore.logout()
       router.push("/login");
@@ -44,14 +42,6 @@
 
 <template>
     <div class="container">
-
-      <div class="alert alert-danger mt-3" role="alert" v-if="errorMessage">
-          {{ errorMessage }}
-      </div>
-
-      <div class="alert alert-success mt-3" role="alert" v-if="successMessage">
-          {{ successMessage }}
-      </div>
 
       <h2>Imposta una nuova password</h2>
       <form @submit.prevent="resetPassword">

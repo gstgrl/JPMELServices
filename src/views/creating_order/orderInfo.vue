@@ -2,6 +2,8 @@
     import JsBarcode from 'jsbarcode';
     import { nextTick, ref } from 'vue';
     import { generateNumericBarcode } from '@/services/generateCodes';
+    import { generaEtichettePDF } from '@/services/generateLabel';
+    import { generaEtichettaA4PDF } from '@/services/generatePDF';
 
     import { useOrderStore } from '@/stores/orderStore';
     import { useOrders } from '@/services/supabaseFunctions/orders';
@@ -29,6 +31,7 @@
 
     const saveOrder = async() => {
 
+
         const orderToSend = {
             barcode: orderStore.currentOrder.barcode,
             sender_id: orderStore.currentOrder.sender_id,
@@ -50,6 +53,9 @@
             throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
         }
 
+        await generaEtichettePDF(orderStore.currentOrder.barcode, orderStore.currentOrder.sender.name, orderStore.currentOrder.receiver.name, orderStore.currentOrder.receiver.addressInfo.address, orderStore.currentOrder.receiver.addressInfo.province, orderStore.currentOrder.receiver.addressInfo.city, orderStore.currentOrder.receiver.phone, orderStore.currentOrder.package_number)
+        await generaEtichettaA4PDF(orderStore.currentOrder.barcode, orderStore.currentOrder.sender.name, orderStore.currentOrder.receiver.name, orderStore.currentOrder.receiver.addressInfo.address, orderStore.currentOrder.receiver.addressInfo.province, orderStore.currentOrder.receiver.addressInfo.city, orderStore.currentOrder.receiver.phone, orderStore.currentOrder.package_number)
+
         orderStore.triggerAction = true
         barcode.value = ''
         generatedBarcode.value = false
@@ -58,7 +64,7 @@
         
         orderStore.resetOrder()  
         orderStore.resetTrigger()
-        toastStore.show("Ordine creato", 'success')
+        toastStore.show("Ordine creato", 'success')// Chiama l'Edge Function per inviare l'email
     }
 
 

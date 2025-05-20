@@ -1,83 +1,55 @@
 <script setup>
     import { ref } from "vue";
-    import { auth, db } from "@/services/firebase";
-    import { createUserWithEmailAndPassword } from "firebase/auth";
-    import { doc, setDoc } from "firebase/firestore";
-    import { useRouter } from "vue-router";
+    import { supabase } from "@/services/supabase";
+    import { generaEtichettePDF } from "@/services/generateLabel";
+    import { useToastStore } from "@/stores/toastStore";
 
-    const name = ref("")
+    const toastStore = useToastStore()
     const email = ref("")
-    const password = ref("")
-    const role = ref("employee")
-
-    const router = useRouter();
 
     const registerUser = async () => {
-        try {
-            // Creazione dell'utente in Firebase
-            const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-            const user = userCredential.user;
-
-            // Salvataggio dei dati dell'utente nel Firestore (nel database)
-            await setDoc(doc(db, "users", user.uid), {
-                email: user.email,
-                role: role.value,
-                name: name.value
-            });
-
-            // Dopo la registrazione, redirigi l'utente alla pagina di login o home
-            alert("Utente registrato con successo!");
-            router.push("/login"); // Sostituisci con il percorso desiderato
-        } catch (error) {
-            console.error("Errore durante la registrazione:", error);
-            alert("Errore durante la registrazione: " + error.message);
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email: email.value,
+        options: {
+          emailRedirectTo: 'http://localhost:5188/add-password'  // dove atterra l’utente dopo il click
         }
+      })
+
+      if(error)  {
+        toastStore.show('Error during returning order to warehouse', 'danger')
+        throw new Error(`Error during returning order to warehouse: ${error.message}`)
+      }
+
+      email.value = ''
+      toastStore.show(`Email inviata correttamente a ${email.value}`, 'success')
+    };
+
+    const createLabel = () => {
+        generaEtichettePDF(
+            "Y123",                     // Codice ordine (stesso per barcode)
+            "AIDELISA FIGUEROA",        // Mittente
+            "ASIA SANCHEZ VARGAS",      // Destinatario
+            "URB MIRAMAR KM 8 1/2",     // Indirizzo
+            "SANTO DOMINGO OESTE",      // Provincia
+            "SANTO DOMINGO OESTE",      // Città
+            "1234567890",               // Telefono
+            5                           // Numero totale di colli
+        );
     };
 </script>
 
 <template>
-    <div class="container mt-5">
-      <h2>Registrazione Utente</h2>
-      <form @submit.prevent="registerUser">
-        <div class="mb-3">
-          <label class="form-label">Nome</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="name"
-            required
-          />
-        </div>
+    <button type="button" @click="createLabel">Crea etichetta</button>
 
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            v-model="email"
-            required
-          />
+    <div class="container mt-5">
+      <h2>Invia Link di accesso</h2>
+      <form @submit.prevent="registerUser">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="email" v-model="email">
+            <label for="floatingInput">Email address</label>
         </div>
   
-        <div class="mb-3">
-          <label class="form-label">Password</label>
-          <input
-            type="password"
-            class="form-control"
-            v-model="password"
-            required
-          />
-        </div>
-  
-        <div class="mb-3">
-          <label class="form-label">Ruolo</label>
-          <select class="form-select" v-model="role" required>
-            <option value="operatore">Operatore</option>
-            <option value="supervisore">Supervisore</option>
-          </select>
-        </div>
-  
-        <button type="submit" class="btn btn-primary">Registrati</button>
+        <button type="submit" class="btn btn-primary">Spedisci link</button>
       </form>
     </div>
   </template>

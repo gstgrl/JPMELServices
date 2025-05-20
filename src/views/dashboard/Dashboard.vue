@@ -1,3 +1,8 @@
+<script setup>
+</script>
+
 <template>
-    Dashboard
+    <div class="container">
+        DASHBOARD
+    </div>
 </template>

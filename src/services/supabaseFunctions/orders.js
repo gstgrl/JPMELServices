@@ -31,6 +31,11 @@ export function useOrders() {
     }   
   }
 
+  const getOrderWithBinding = async() => {
+    const { data, error } = await supabase.from("orders").select("id, barcode, status, description, sender:sender_id (id, name, surname, email), receiver:receiver_id (id, name, surname, email), pallet:pallet_id (id, status), package_number")
+    return { data, error }
+  }
+
   const createOrder = async (order) => {
     const { data, error } = await supabase.from("orders").insert([order]).select().single()
     return { data, error }
@@ -57,11 +62,18 @@ export function useOrders() {
     return { data, error }
   }
 
+  const returnIDS = async() => {
+    const { data, error } = await supabase.from('orders').select('sender_id, receiver_id');
+    return { data, error }
+  }
+
   return {
     getOrders,
     getOrder,
+    getOrderWithBinding,
     createOrder,
     updateOrder,
     deleteOrder,
+    returnIDS
   }
 }

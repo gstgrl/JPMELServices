@@ -32,7 +32,7 @@
 </script>
 
 <template>
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenu">
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenu">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ $t('navbar.settings') }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -40,6 +40,8 @@
 
         <div class="offcanvas-body">
             <ul class="list-group">
+                <li class="list-group-item"><RouterLink to="/orders" class="nav-link nav-link-page"><h6>Getsione Ordini</h6></RouterLink></li>
+                <li class="list-group-item"><RouterLink to="/pallets" class="nav-link nav-link-page"><h6>Gestione Bancali</h6></RouterLink></li>
                 <li class="list-group-item"><RouterLink to="/createUser" class="nav-link nav-link-page"><h6>{{ $t('navbar.settingsLabels.createNewUser') }}</h6></RouterLink></li>
             </ul>
 

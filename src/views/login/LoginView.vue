@@ -17,7 +17,6 @@
           const result = await authStore.login(email.value, password.value);  // Chiamata al login
 
           if(result) {
-            toastStore.show("Bentornato", 'success')
             router.push("/dashboard");
           } else {
             // Se il login è fallito, mostra il messaggio di errore dallo store
