@@ -60,16 +60,44 @@ export const useScannerStore = defineStore('scanner', () => {
       if (cameras.length === 0) {
         error.value = 'No cameras available'
         return false
+      }    
+
+      // Configurazione ottimizzata
+      const config = {
+        fps: 15,  // Aumenta il frame rate
+        qrbox: {
+          width: 280,
+          height: 280
+        },
+        rememberLastUsedCamera: true,
+        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.CODE_128
+        ]
       }
+
+      // Aggiungi un piccolo delay prima di iniziare la scansione
+      await new Promise(resolve => setTimeout(resolve, 300))
 
       await scanner.value.start(
         cameraId.value,
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 }
+        config,
+        (decodedText, decodedResult) => {
+          // Solo se effettivamente decodificato
+          if (decodedText) {
+            onScanSuccess(decodedText, decodedResult)
+          }
         },
-        onScanSuccess,
-        onScanError
+        (errorMessage, errorObj) => {
+          // Filtra gli errori non rilevanti
+          if (!errorMessage.includes('NotFoundException') && 
+              !errorMessage.includes('No MultiFormat Readers')) {
+            error.value = `Errore: ${errorMessage}`
+          }
+        }
       )
 
       isScanning.value = true
