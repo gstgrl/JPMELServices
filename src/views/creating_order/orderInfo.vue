@@ -53,7 +53,7 @@
             throw new Error(`Error during creating order delivery status history log: ${errorLog.message}`)
         }
 
-        await generaEtichettePDF(orderStore.currentOrder.barcode, orderStore.currentOrder.sender.name, orderStore.currentOrder.receiver.name, orderStore.currentOrder.receiver.addressInfo.address, orderStore.currentOrder.receiver.addressInfo.province, orderStore.currentOrder.receiver.addressInfo.city, orderStore.currentOrder.receiver.phone, orderStore.currentOrder.package_number)
+        await generaEtichettePDF(orderStore.currentOrder.barcode, `${orderStore.currentOrder.sender.name} ${orderStore.currentOrder.sender.surname}`, `${orderStore.currentOrder.receiver.name} ${orderStore.currentOrder.receiver.surname}`, orderStore.currentOrder.receiver.addressInfo.address, orderStore.currentOrder.receiver.addressInfo.province, orderStore.currentOrder.receiver.addressInfo.city, orderStore.currentOrder.receiver.phone, orderStore.currentOrder.package_number)
         await generaEtichettaA4PDF(orderStore.currentOrder.barcode, orderStore.currentOrder.sender.name, orderStore.currentOrder.receiver.name, orderStore.currentOrder.receiver.addressInfo.address, orderStore.currentOrder.receiver.addressInfo.province, orderStore.currentOrder.receiver.addressInfo.city, orderStore.currentOrder.receiver.phone, orderStore.currentOrder.package_number)
 
         orderStore.triggerAction = true
