@@ -1,12 +1,21 @@
 <script setup>
   import { RouterView } from "vue-router";
-  import navbar from "@/components/navbar.vue";
+  import { useRoute } from 'vue-router'
+  import { useScannerStore } from "./stores/cameraStore";
+
+  import navbar from "@/components/layout/navbar.vue";
+  import customerNavbar from "./components/layout/customerNavbar.vue";
+  import toastContainer from "./components/ui/toastContainer.vue";
+  
+  const route = useRoute()
 
 </script>
 
 <template>
-    <navbar />
+    <customerNavbar v-if="route.meta.hideNavbar"/>
+    <navbar v-else/>
     <RouterView />
+    <toastContainer />
 </template>
 
 <style>

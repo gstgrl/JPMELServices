@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DieCutLabel Version="8.0" Units="mm">
+    <PaperOrientation>Landscape</PaperOrientation>
+    <Id>Custom</Id>
+    <PaperName>Custom 104x159</PaperName>
+
+    <DrawCommands>
+        <RoundRectangle X="0" Y="0" Width="159" Height="104" Rx="2.5" Ry="2.5" />
+    </DrawCommands>
+
+    <ObjectInfo>
+        <ImageObject>
+            <Name>Logo</Name>
+            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+            <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+            <ImageLocation>logo.png</ImageLocation>
+            <Size Width="30" Height="30" />
+            <Position X="5" Y="5" />
+        </ImageObject>
+    </ObjectInfo>
+
+    <ObjectInfo>
+        <TextObject>
+            <Name>Recipient</Name>
+            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+            <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+            <Rotation>Rotation0</Rotation>
+            <IsMirrored>False</IsMirrored>
+            <IsVariable>True</IsVariable>
+            <HorizontalAlignment>Center</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
+            <TextFitMode>ShrinkToFit</TextFitMode>
+            <StyledText>
+                <Element>
+                    <String>{{recipient}}</String>
+                    <Attributes>
+                        <Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" />
+                        <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+                    </Attributes>
+                </Element>
+            </StyledText>
+            <Position X="40" Y="20" />
+            <Size Width="80" Height="40" />
+        </TextObject>
+    </ObjectInfo>
+
+    <ObjectInfo>
+        <TextObject>
+            <Name>Colli</Name>
+            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+            <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+            <Rotation>Rotation0</Rotation>
+            <IsMirrored>False</IsMirrored>
+            <IsVariable>True</IsVariable>
+            <TextFitMode>ShrinkToFit</TextFitMode>
+            <StyledText>
+                <Element>
+                    <String>{{colli}}</String>
+                    <Attributes>
+                        <Font Family="Arial" Size="10" Bold="True" />
+                        <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+                    </Attributes>
+                </Element>
+            </StyledText>
+            <Position X="130" Y="5" />
+            <Size Width="25" Height="15" />
+        </TextObject>
+    </ObjectInfo>
+
+    <ObjectInfo>
+        <BarcodeObject>
+            <Name>Barcode</Name>
+            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+            <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+            <LinkedObjectName></LinkedObjectName>
+            <Rotation>Rotation0</Rotation>
+            <IsMirrored>False</IsMirrored>
+            <IsVariable>True</IsVariable>
+            <TextPosition>Bottom</TextPosition>
+            <CheckSumEnabled>False</CheckSumEnabled>
+            <TextFont Family="Arial" Size="10" />
+            <Type>Code128Auto</Type>
+            <Size>Medium</Size>
+            <Position X="50" Y="70" />
+            <Size Width="60" Height="20" />
+            <Text>{{barcode}}</Text>
+        </BarcodeObject>
+    </ObjectInfo>
+</DieCutLabel>

@@ -1,42 +1,75 @@
 import { defineStore } from "pinia";
-import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "@/services/firebase";
+import { supabase } from "@/services/supabase";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
-    loading: true,
-    isLoggedIn: false
+    session: null,
+    errorMessage: null,
+    isLogged: false,
+    isLoading: true,
+    isRecovering: false
   }),
   actions: {
+    async init() {
+      const { data } = await supabase.auth.getSession()
+      this.user = data.session?.user || null
+      this.isLoading = false
+  
+      // ascolta eventuali cambiamenti (es. logout automatico o nuovo login)
+      supabase.auth.onAuthStateChange((event, session) => {
+        this.user = session?.user || null
+        this.session = session
+        this.isLogged = !!session
+
+        // Controlla se è un flusso di recupero password
+        if (event === 'PASSWORD_RECOVERY') {
+          this.isRecovering = true
+        } else {
+          this.isRecovering = false
+        }
+      })
+    },
+
     async login(email, password) {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        this.user = userCredential.user;
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+    
+      if (error) {
+        this.errorMessage = error
+        this.isLogged = false
+        this.isLoading = false
+        return false
 
-        this.isLoggedIn = true
-
-        localStorage.setItem("token", await this.user.getIdToken());
-      } catch (error) {
-        console.error("Errore di login:", error);
+      } else {
+        this.user = data.user
+        this.session = data.session
+        return true
       }
     },
-    async logout() {
-      await signOut(auth);
-      this.user = null;
-      this.isLoggedIn = false
-      localStorage.removeItem("token");
-    },
-    checkAuth() {
 
-      onAuthStateChanged(auth, async (user) => {
-        this.user = user;
-        this.loading = false;
-        if (user) {
-          this.isLoggedIn = true
-        }else {
-          this.isLoggedIn = false
-        }
-      });
+    async logout() {
+      const {data, error} = await supabase.auth.signOut()
+
+      if (error) {
+        console.error('Errore durante il logout:', error.message)
+        this.errorMessage = error
+        return false
+
+      } else {
+        console.log('Logout eseguito con successo')
+        this.errorMessage = null
+        this.user = null
+        this.session = null
+        this.isLogged = false
+        this.isRecovering = false
+        return true
+      }
     }
+  },
+  getters: {
+    isAuthenticated: (state) => !!state.user  
   }
 });

@@ -2,19 +2,44 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/auth";
 import { watch } from 'vue';
 
-import CreateUser from '@/views/CreateUser.vue';
-import LoginView from '@/views/LoginView.vue';
-import CreatePallet from '@/views/CreatePallet.vue';
-import Dashboard from '@/views/Dashboard.vue';
-import GenerateLabel from '@/views/GenerateLabel.vue';
+//Login Views
+import LoginView from '@/views/login/LoginView.vue';
+import forgotPassword from '@/views/login/forgotPassword.vue';
+import resetPassword from '@/views/login/resetPassword.vue';
+
+//Managment Views
+import Dashboard from '@/views/dashboard/Dashboard.vue';
+import ordersView from '@/views/control_view/orders_view/ordersView.vue';
+import palletView from '@/views/control_view/palletView.vue';
+
+import CreateUser from '@/views/creating_user/CreateUser.vue';
+import newPassword from '@/views/creating_user/newPassword.vue';
+
+import OrderCreationView from '@/views/creating_order/OrderCreationView.vue';
+import PalletClosureView from '@/views/closure_pallet/PalletClosureView.vue';
+import WareHouseView from '@/views/warehouse/WareHouseView.vue';
+import OrderDeliveryManagmentView from '@/views/delivery_view/OrderDeliveryManagmentView.vue';
+import CustomerView from '@/views/customer/CustomerView.vue';
 
 
 const routes = [
-  {path: '/login', component: LoginView},
-  {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true}},
-  {path: "/createUser", component: CreateUser, meta: { requiresAuth: true}},
-  {path: "/createPallet", component: CreatePallet, meta: { requiresAuth: true}},
-  {path: "/generateLabel", component: GenerateLabel, meta: { requiresAuth: true}},
+  {path: '/customer', component: CustomerView, meta: { hideNavbar: true}},
+
+  {path: '/login', component: LoginView, meta: { hideNavbar: false}},
+  {path: '/forgot', component: forgotPassword, meta: { hideNavbar: false}},
+  {path: '/reset-password', component: resetPassword, meta: { hideNavbar: true}},
+
+  {path: "/dashboard", component: Dashboard, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: '/orders', component: ordersView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: '/pallets', component: palletView, meta: { requiresAuth: true, hideNavbar: false}},
+
+  {path: "/createUser", component: CreateUser, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/add-password", component: newPassword, meta: { requiresAuth: true, hideNavbar: false}},
+
+  {path: "/newOrder", component: OrderCreationView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/closePallet", component: PalletClosureView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/warehouse", component: WareHouseView, meta: { requiresAuth: true, hideNavbar: false}},
+  {path: "/delivery", component: OrderDeliveryManagmentView, meta: { requiresAuth: true, hideNavbar: false}},
 ];
 
 const router = createRouter({
@@ -27,9 +52,9 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
   // Aspetta che il controllo dell'autenticazione sia completato
-  if (authStore.loading) {
+  if (authStore.isLoading) {
     const unwatch = watch(
-      () => authStore.loading,
+      () => authStore.isLoading,
       (newVal) => {
         if (!newVal) {
           unwatch();
@@ -42,7 +67,7 @@ router.beforeEach((to, from, next) => {
   }
 
   function proceed() {
-    if (to.meta.requiresAuth && !authStore.user) {
+    if (to.meta.requiresAuth && !authStore.user && !authStore.isRecovering) {
       // Se la route richiede autenticazione ma l'utente non è loggato, vai al login
       next("/login");
     } else if (authStore.user && to.path === "/login") {

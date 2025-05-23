@@ -2,8 +2,11 @@
     import { ref } from "vue";
     import { useRouter } from "vue-router";
     import { useAuthStore } from "@/stores/auth";
+    import { useToastStore } from "@/stores/toastStore";
 
-    const authStore = useAuthStore();
+    const authStore = useAuthStore()
+    const toastStore = useToastStore()
+
     const email = ref("")
     const password = ref("")
 
@@ -11,18 +14,24 @@
 
     const login = async () => {
         try {
-          await authStore.login(email.value, password.value);  // Chiamata al login
-          router.push("/dashboard");
+          const result = await authStore.login(email.value, password.value);  // Chiamata al login
+
+          if(result) {
+            router.push("/dashboard");
+          } else {
+            // Se il login è fallito, mostra il messaggio di errore dallo store
+            toastStore.show("Credenziali errate", 'warning')
+          }
             
         } catch (error) {
-          console.error("Errore nel login", error)
+          toastStore.show("Si è verificato un errore durante il login", 'danger')
         }
     };
 </script>
 
 <template>
   <div class="container mt-5">
-    <h2>login</h2>
+    <h2>{{ $t('accessWords.login') }}</h2>
     <form @submit.prevent="login">
 
       <div class="mb-3">
@@ -45,7 +54,9 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Accedi</button>
+      <RouterLink to="/forgot"><h6>Recupera Password</h6></RouterLink>
+
+      <button type="submit" class="btn btn-primary mt-3">{{ $t('accessWords.login') }}</button>
     </form>
   </div>
 </template>
