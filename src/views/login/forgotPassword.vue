@@ -10,7 +10,7 @@
         errorMessage.value = "";
         successMessage.value = "";
 
-        const { error } = await supabase.auth.resetPasswordForEmail(email.value, { redirectTo: 'http://localhost:5173/reset-password'});
+        const { error } = await supabase.auth.resetPasswordForEmail(email.value, { redirectTo: 'https://jpmelservices.netlify.app/reset-password'});
         if(error)  {
             toastStore.show('Error during resetting user password', 'danger')
             throw new Error(`Error during resetting user password: ${error.message}`)

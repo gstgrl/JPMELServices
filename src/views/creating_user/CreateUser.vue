@@ -11,7 +11,7 @@
       const { data, error } = await supabase.auth.signInWithOtp({
         email: email.value,
         options: {
-          emailRedirectTo: 'http://localhost:5188/add-password'  // dove atterra l’utente dopo il click
+          emailRedirectTo: 'https://jpmelservices.netlify.app/add-password'  // dove atterra l’utente dopo il click
         }
       })
 
@@ -39,7 +39,6 @@
 </script>
 
 <template>
-    <button type="button" @click="createLabel">Crea etichetta</button>
 
     <div class="container mt-5">
       <h2>Invia Link di accesso</h2>
