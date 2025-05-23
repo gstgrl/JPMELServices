@@ -1,7 +1,6 @@
 <script setup>
     import { ref } from "vue";
     import { supabase } from "@/services/supabase";
-    import { generaEtichettePDF } from "@/services/generateLabel";
     import { useToastStore } from "@/stores/toastStore";
 
     const toastStore = useToastStore()
@@ -22,19 +21,6 @@
 
       email.value = ''
       toastStore.show(`Email inviata correttamente a ${email.value}`, 'success')
-    };
-
-    const createLabel = () => {
-        generaEtichettePDF(
-            "Y123",                     // Codice ordine (stesso per barcode)
-            "AIDELISA FIGUEROA",        // Mittente
-            "ASIA SANCHEZ VARGAS",      // Destinatario
-            "URB MIRAMAR KM 8 1/2",     // Indirizzo
-            "SANTO DOMINGO OESTE",      // Provincia
-            "SANTO DOMINGO OESTE",      // Città
-            "1234567890",               // Telefono
-            5                           // Numero totale di colli
-        );
     };
 </script>
 
