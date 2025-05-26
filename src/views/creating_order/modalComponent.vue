@@ -132,7 +132,7 @@
 
             
             <button type="submit" class="btn btn-secondary">
-              Salva e chiudi
+              {{ $t('orderCreation.buttons.saveNewClient') }}
             </button>
           </form>
         </div>

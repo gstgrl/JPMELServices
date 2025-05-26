@@ -1,5 +1,8 @@
 <script setup>
     import { computed, ref } from 'vue';
+    import { useI18n } from 'vue-i18n'
+
+    const { t } = useI18n()
 
     const props = defineProps({
         status: {
@@ -14,27 +17,27 @@
     const statusStyles = computed(() => ({
         1: {
             class: 'bg-secondary text-white border badge',
-            label: 'Processing'
+            label: t('controlView.orders.badges.processing')
         },
 
         2: {
             class: 'bg-primary text-white border badge',
-            label: 'Shipped'
+            label: t('controlView.orders.badges.shipped')
         },
 
         3: {
             class: 'bg-warning text-dark border badge',
-            label: 'Arrived in Domenican'
+            label: t('controlView.orders.badges.arrived')
         },
 
         4: {
             class: 'bg-info text-dark border badge',
-            label: 'In delivery'
+            label: t('controlView.orders.badges.inDelivery')
         },
 
         5: {
             class: 'bg-success text-white border badge',
-            label: 'Delivered'
+            label: t('controlView.orders.badges.delivered')
         }
     }));
 </script>

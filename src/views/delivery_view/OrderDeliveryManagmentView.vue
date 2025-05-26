@@ -29,7 +29,7 @@
 <template>
     <div class="container">
         <button class="btn btn-primary" @click="toWarehouse">
-            Torna in magazzino
+            {{ $t('delivery.buttons.returnToWarehouse') }}
         </button>
     </div>
     <div class="container">
@@ -40,7 +40,7 @@
 
         <hr>
 
-        <h6 class="order-title mb-2">📦 Ordini Riprogrammati:</h6> 
+        <h6 class="order-title mb-2">📦 {{ $t('delivery.titles.orderRescheduled') }}:</h6> 
         <div v-for="(order, index) in rescheduledOrders" :key="index" class="order-item">
             <deliveryOrderCard :item="order"/>
         </div>

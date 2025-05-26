@@ -47,7 +47,7 @@
               <div class="bottom-bar-links" v-else>
                 <RouterLink to="/newOrder" class="nav-link"><h6>{{ $t('navbar.newOrder') }}</h6></RouterLink>
                 <RouterLink to="/closePallet" class="nav-link"><h6>{{ $t('navbar.newPallet') }}</h6></RouterLink>
-                <RouterLink to="/delivery" class="nav-link"><h6>DELIVERY MANAGER</h6></RouterLink>
+                <RouterLink to="/delivery" class="nav-link"><h6>{{ $t('navbar.delivery') }}</h6></RouterLink>
               </div>
           </div>
   

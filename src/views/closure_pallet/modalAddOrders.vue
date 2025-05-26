@@ -4,12 +4,16 @@
   import { usePalletStore } from '@/stores/palletStore';
   import { Modal } from 'bootstrap'
   import { ref, onMounted, handleError } from 'vue';
-  import Popup from '@/components/ui/Popup.vue';
-
+  import { useToastStore } from '@/stores/toastStore';
+  import { useI18n } from 'vue-i18n';
+  
+  
+  const { t } = useI18n();
   const modalRef = ref(null)
-  const popup = ref(null)
-  const palletStore = usePalletStore()
   let modalInstance = null
+
+  const palletStore = usePalletStore()
+  const toastStore = useToastStore()
 
   onMounted(() => {
     if(modalRef.value) {
@@ -56,10 +60,10 @@
     
     if (isChecked) {
       palletStore.addOrder(order)
-      popup.value?.showPopup('Ordine aggiunto al bancale');
+      toastStore.show(t('messages.orderAddedToPallet'))
     } else {
       palletStore.removeOrder(order.barcode)
-      popup.value?.showPopup('Ordine rimosso dal bancale');
+      toastStore.show(t('messages.orderRemovedFromPallet'))
     }
   }
 </script>
@@ -79,11 +83,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="close">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="close">{{ $t('palletClosure.closeModal') }}</button>
         </div>
       </div>
     </div>
   </div>
-
-  <Popup ref="popup" />
 </template>

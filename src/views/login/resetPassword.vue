@@ -43,7 +43,7 @@
 <template>
     <div class="container">
 
-      <h2>Imposta una nuova password</h2>
+      <h2>{{ $t('accessWords.newPasswordTitle') }}</h2>
       <form @submit.prevent="resetPassword">
         <div class="form-floating mb-3">
             <input
@@ -66,10 +66,10 @@
               id="emaconfirmPasswordil"
               required
           />
-          <label for="confirmPassword">Conferma la Password</label>
+          <label for="confirmPassword">{{ $t('accessWords.confirmPassword') }}</label>
         </div>
 
-        <button type="submit" class="btn btn-primary">Imposta la nuova password</button>
+        <button type="submit" class="btn btn-primary">{{ $t('accessWords.newPasswordAction') }}</button>
       </form>
     </div>
 </template>

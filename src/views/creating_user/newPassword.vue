@@ -30,10 +30,8 @@
 </script>
 
 <template>
-    <button type="button" @click="createLabel">Crea etichetta</button>
-
     <div class="container mt-5">
-      <h2>Invia Link di accesso</h2>
+      <h2>{{ $t('accessWords.newPasswordTitle') }}</h2>
       <form @submit.prevent="confirmPassword">
         <div class="form-floating mb-3">
             <input type="password" class="form-control" id="password" placeholder="password" v-model="password">
@@ -42,10 +40,10 @@
 
         <div class="form-floating mb-3">
             <input type="password" class="form-control" id="confirm-password" placeholder="confirm password" v-model="passwordConfirmation">
-            <label for="confirm-password">Confirm password</label>
+            <label for="confirm-password">{{ $t('accessWords.confirmPassword') }}</label>
         </div>
   
-        <button type="submit" class="btn btn-primary">Imposta nuova password</button>
+        <button type="submit" class="btn btn-primary">{{ $t('accessWords.newPasswordAction') }}</button>
       </form>
     </div>
-  </template>
+</template>

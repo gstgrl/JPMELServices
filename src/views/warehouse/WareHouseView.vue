@@ -126,12 +126,12 @@
             <div class="button-filters-div">
                 <div class="filter-div my-2">
                     <select :class="{'form-select me-1': !device.isMobile, 'form-select-sm me-1': device.isMobile}" aria-label="Default select example" v-model="filters.province">
-                        <option value="" selected disabled>Provincia</option>
+                        <option value="" selected disabled>{{ $t('addressInfo.province') }}</option>
                         <option :value="`${province}`" v-for="(province) in warehouseStore.provinces">{{ province }}</option>
                     </select>
 
                     <select :class="{'form-select m-1': !device.isMobile, 'form-select-sm m-1': device.isMobile}" aria-label="Default select example" v-model="filters.city">
-                        <option value="" selected disabled>Città</option>
+                        <option value="" selected disabled>{{ $t('addressInfo.city') }}</option>
                         <option :value="`${city}`" v-for="(city) in warehouseStore.cities" :hidden="filters.province && !warehouseStore.cityBelongsToProvince(city, filters.province)"> {{ city }} </option>
                     </select>
                 </div>
@@ -146,7 +146,7 @@
         <div class="row">
 
             <div class="col-6">
-                <div><h5>Ordini in Magazzino</h5></div>
+                <div><h5>{{ $t('warehouse.orderAvilable') }}</h5></div>
                 
                 <div class="card my-2 w-75" v-for="(order) in warehouseStore.filteredOrders">
                     <div class="card-header d-flex justify-content-between">
@@ -161,17 +161,17 @@
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <div class="card-body-order-info">
-                                <h6>Città:</h6>
+                                <h6>{{ $t('addressInfo.city') }}:</h6>
                                 <p class="card-text ms-2">{{ order.addressInfo.city }}</p>
                             </div>
 
                             <div class="card-body-order-info">
-                                <h6>Provincia:</h6>
+                                <h6>{{ $t('addressInfo.province') }}:</h6>
                                 <p class="card-text ms-2">{{ order.addressInfo.province }}</p>
                             </div>
 
                             <div class="card-body-order-info">
-                                <h6>CAP:</h6>
+                                <h6>{{ $t('addressInfo.zipCode') }}:</h6>
                                 <p class="card-text ms-2">{{ order.addressInfo.zipCode }}</p>
                             </div>
                         </div>
@@ -186,7 +186,7 @@
             </div>
 
             <div class="col-6">
-                <div><h5>Ordini Selezionati</h5></div>
+                <div><h5>{{ $t('warehouse.selectedOrder') }}</h5></div>
 
                 <button class="btn btn-success" v-if="!warehouseStore.ordersSelected.length == 0" type="button" @click="pushToDelivery">Vai in Consegna</button>
                 

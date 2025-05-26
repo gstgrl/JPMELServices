@@ -25,16 +25,15 @@
 </script>
 
 <template>
-
     <div class="container mt-5">
-      <h2>Invia Link di accesso</h2>
+      <h2>{{ $t('accessWords.askSendAccessLink') }}</h2>
       <form @submit.prevent="registerUser">
         <div class="form-floating mb-3">
             <input type="email" class="form-control" id="floatingInput" placeholder="email" v-model="email">
-            <label for="floatingInput">Email address</label>
+            <label for="floatingInput">{{ $t('accessWords.emailAdress') }}</label>
         </div>
   
-        <button type="submit" class="btn btn-primary">Spedisci link</button>
+        <button type="submit" class="btn btn-primary">{{ $t('accessWords.sendLink') }}</button>
       </form>
     </div>
   </template>

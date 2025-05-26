@@ -142,17 +142,17 @@
           </div>
           <div class="card-body">
             <div class="card-body-order-info">
-              <h6>Città:</h6>
+              <h6>{{ $t('addressInfo.city') }}:</h6>
               <p class="card-text ms-2">{{ order.addressInfo.city }}</p>
             </div>
 
             <div class="card-body-order-info">
-              <h6>Provincia:</h6>
+              <h6>{{ $t('addressInfo.province') }}:</h6>
               <p class="card-text ms-2">{{ order.addressInfo.province }}</p>
             </div>
 
             <div class="card-body-order-info">
-              <h6>CAP:</h6>
+              <h6>{{ $t('addressInfo.zipCode') }}:</h6>
               <p class="card-text ms-2">{{ order.addressInfo.zipCode }}</p>
             </div>
           </div>
@@ -163,21 +163,21 @@
          <div class="d-flex button-div">
             
             <button type="button" class="btn btn-primary my-2" @click="openCreationPalletModal('create')" v-if="!palletStore.palletId">
-              Crea Bancale
+              {{ $t('palletClosure.createPallet') }}
             </button>
 
             <div class="d-flex justify-content-between button-group-div" v-else>
               <button type="button" class="btn btn-primary my-2" @click="openCreationPalletModal('add')">
-                Aggiungi ordini
+                {{ $t('palletClosure.adOrders') }}
               </button>
 
               <button type="button" class="btn btn-danger my-2" @click="undoPallet">
-                Annulla creazione
+                {{ $t('palletClosure.unduCreation') }}
               </button>
             </div>
 
             <button type="button" class="btn btn-success my-2 close-pallet-button" @click="closePallet" v-if="palletStore.palletId">
-              Chiudi Bancale
+              {{ $t('palletClosure.closureButton') }}
             </button>
          </div>
       </div>

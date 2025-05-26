@@ -74,17 +74,17 @@
             <div class="row card-body d-flex justify-content-between">
                 <div>
                     <div class="card-body-order-info">
-                        <h6>Città:</h6>
+                        <h6>{{ $t('addressInfo.city') }}:</h6>
                         <p class="card-text ms-2">{{ props.addressInfo.city }}</p>
                     </div>
 
                     <div class="card-body-order-info">
-                        <h6>Provincia:</h6>
+                        <h6>{{ $t('addressInfo.province') }}:</h6>
                         <p class="card-text ms-2">{{ props.addressInfo.province }}</p>
                     </div>
 
                     <div class="card-body-order-info">
-                        <h6>CAP:</h6>
+                        <h6>{{ $t('addressInfo.zipCode') }}:</h6>
                         <p class="card-text ms-2">{{ props.addressInfo.zipCode }}</p>
                     </div>
                 </div>
@@ -99,8 +99,8 @@
         </div>
         
         <div class="modal-footer">
-            <button class="btn btn-warning" @click="rescheduleDelivery" v-if="props.delivery_status != 'rescheduled'">⏳ Riprogramma</button>
-            <button class="btn btn-primary" @click="showSigaturePad = true">✍️ Firma</button>
+            <button class="btn btn-warning" @click="rescheduleDelivery" v-if="props.delivery_status != 'rescheduled'">⏳ {{ $t('delivery.buttons.rescheduleButton') }}</button>
+            <button class="btn btn-primary" @click="showSigaturePad = true">✍️ {{ $t('delivery.buttons.signatureButton') }}</button>
         </div>
 
 

@@ -54,7 +54,7 @@
         />
       </div>
 
-      <RouterLink to="/forgot"><h6>Recupera Password</h6></RouterLink>
+      <RouterLink to="/forgot"><h6>{{ $t('accessWords.refoundPassword') }}</h6></RouterLink>
 
       <button type="submit" class="btn btn-primary mt-3">{{ $t('accessWords.login') }}</button>
     </form>

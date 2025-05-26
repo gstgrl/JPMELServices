@@ -25,7 +25,7 @@
 <template>
     <div class="container">
 
-        <h2>Recupero Password</h2>
+        <h2>{{ $t('accessWords.refoundPassword') }}</h2>
         <form @submit.prevent="sendResetLink">
             <div class="form-floating mb-3">
                 <input
@@ -38,7 +38,7 @@
                 />
                 <label for="email">Email</label>
             </div>
-            <button type="submit" class="btn btn-primary">Invia link di reset</button>
+            <button type="submit" class="btn btn-primary">{{ $t('accessWords.sendToRefoundPassword') }}</button>
         </form>
     </div>
 </template>

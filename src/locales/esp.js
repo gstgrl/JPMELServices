@@ -1,59 +1,106 @@
 export default {
-  //titoli del menu secondario
+  messages: {
+    orderAddedToPallet: "Pedido añadido al palé",
+    orderRemovedFromPallet: "Pedido eliminado del palé"
+  },
   navbar: {
-    newOrder: "NUEVO ORDEN",
-    newPallet: "NUEVO PALET",
+    newOrder: "NUEVO PEDIDO",
+    newPallet: "NUEVO PALÉ",
     warehouse: "ALMACÉN",
-    settings: "IMPUESTOS",
+    settings: "CONFIGURACIÓN",
+    delivery: "GESTIÓN DE ENTREGAS",
     settingsLabels: {
-      createNewUser: "Creación de usuarios"
+      createNewUser: "Creación de usuario",
+      orderManager: "Gestión de pedidos",
+      palletManager: "Gestión de palés"
     }
   },
   accessWords: {
     login: "Iniciar sesión",
     logout: "Cerrar sesión",
     signin: "Registrarse",
+    emailAdress: "Dirección de correo",
+    askSendAccessLink: "Enviar enlace de acceso",
+    sendLink: "Enviar enlace",
+    newPasswordTitle: "Establecer una nueva contraseña",
+    newPasswordAction: "Establecer nueva contraseña",
+    confirmPassword: "Confirmar contraseña",
+    refoundPassword: "Recuperar contraseña",
+    sendToRefoundPassword: "Enviar enlace de reinicio"
   },
-  orderCreation: {
-    title: "Generar etiqueta",
-    receiver: "Beneficiario",
-    placeholderNameReciver: "Nombre",
-    placeholderSurnameReciver: "Apellido",  
+  addressInfo: {
     address: "Dirección",
     province: "Provincia",
     city: "Ciudad",
-    phoneNumber: "Teléfono móvil",
-    zipCode: "Zip Code",
+    phoneNumber: "Móvil",
+    zipCode: "Código Postal"
+  },
+  orderCreation: {
+    title: "Generar etiqueta",
+    receiver: "Destinatario",
+    placeholderNameReciver: "Nombre",
+    placeholderSurnameReciver: "Apellido",
+    address: "Dirección",
+    province: "Provincia",
+    city: "Ciudad",
+    phoneNumber: "Móvil",
+    zipCode: "Código Postal",
     sender: "Remitente",
+    packageNumber: "Paquetes",
     buttons: {
-      generateBarCode: "Generar Código de Barras",
-      saveOrder: "Guardar Pedido"
+      generateBarCode: "Generar código de barras",
+      saveOrder: "Guardar pedido",
+      saveNewClient: "Guardar y cerrar"
     }
   },
   palletClosure: {
-    placholderInput: "Escanee o ingrese el código de barras",
-    closureButton: "Cerrar Paleta"
+    placholderInput: "Escanea o introduce el código de barras",
+    createPallet: "Crear palé",
+    adOrders: "Añadir pedidos",
+    unduCreation: "Cancelar creación",
+    closureButton: "Cerrar palé",
+    closeModal: "Cerrar"
   },
   warehouse: {
     selectedOrder: "Pedidos seleccionados",
     unloadDate: "Descargado el",
-    orderAvilable: "Órdenes actuales",
-    barcodeText: "Código de Barras",
+    orderAvilable: "Pedidos en almacén",
+    barcodeText: "Código de barras",
     buttons: {
-      deliveryButton: "Ir a Entrega"
+      deliveryButton: "Ir a entrega"
     }
   },
   delivery: {
+    titles: {
+      orderToDeliver: "Pedidos a entregar",
+      orderDelivered: "Pedidos entregados",
+      orderRescheduled: "Pedidos reprogramados"
+    },
     badgeStates: {
       delivered: "Entregado",
       pending: "Pendiente",
       rescheduled: "Reprogramado",
-      canceled: "Fallido"
+      canceled: "Cancelado"
     },
     buttons: {
-      signatureButton: "Firmar para entrega",
-      rescheduleButton: "Reprogramar entrega"
+      signatureButton: "Firmar",
+      rescheduleButton: "Reprogramar",
+      returnToWarehouse: "Volver al almacén"
+    }
+  },
+  controlView: {
+    orders: {
+      badges: {
+        processing: "En proceso",
+        shipped: "Enviado",
+        arrived: "Llegado a Dominicana",
+        inDelivery: "En entrega",
+        delivered: "Entregado"
+      },
+      actions: {
+        modifyOrder: "Modificar pedido"
+      },
+      orderStatus: "Estado del pedido"
     }
   }
 }
-    

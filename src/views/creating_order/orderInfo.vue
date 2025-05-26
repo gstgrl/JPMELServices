@@ -77,12 +77,12 @@
         </div>
 
         <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">Colli</span>
+            <span class="input-group-text" id="basic-addon1">{{ $t('orderCreation.packageNumber') }}</span>
             <input type="number" class="form-control" aria-label="Package Number" aria-describedby="basic-addon1" min="1" value="1" v-model="orderStore.currentOrder.package_number">
         </div>
 
-        <button type="submit" class="btn btn-primary" v-if="!generatedBarcode">Genera Codice a Barre</button>
+        <button type="submit" class="btn btn-primary" v-if="!generatedBarcode">{{ $t('orderCreation.buttons.generateBarCode') }}</button>
     </form>
 
-    <button type="button" class="btn btn-primary" v-if="generatedBarcode" @click="saveOrder">Salva ordine</button>
+    <button type="button" class="btn btn-primary" v-if="generatedBarcode" @click="saveOrder">{{ $t('orderCreation.buttons.saveOrder') }}</button>
 </template>

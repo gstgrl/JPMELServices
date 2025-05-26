@@ -40,8 +40,8 @@
 
         <div class="offcanvas-body">
             <ul class="list-group">
-                <li class="list-group-item"><RouterLink to="/orders" class="nav-link nav-link-page"><h6>Getsione Ordini</h6></RouterLink></li>
-                <li class="list-group-item"><RouterLink to="/pallets" class="nav-link nav-link-page"><h6>Gestione Bancali</h6></RouterLink></li>
+                <li class="list-group-item"><RouterLink to="/orders" class="nav-link nav-link-page"><h6>{{ $t('navbar.settingsLabels.orderManager') }}</h6></RouterLink></li>
+                <li class="list-group-item"><RouterLink to="/pallets" class="nav-link nav-link-page"><h6>{{ $t('navbar.settingsLabels.palletManager') }}</h6></RouterLink></li>
                 <li class="list-group-item"><RouterLink to="/createUser" class="nav-link nav-link-page"><h6>{{ $t('navbar.settingsLabels.createNewUser') }}</h6></RouterLink></li>
             </ul>
 

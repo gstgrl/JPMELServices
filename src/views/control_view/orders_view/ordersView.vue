@@ -32,9 +32,6 @@
             orders.value[index].status = status
         }
     }
-
-    console.log(orders.value)
-
 </script>
 
 <template>
@@ -47,16 +44,16 @@
 
             <div class="row card-body justify-content-between">
                 <div class="col-4">
-                    <h5>Mittente</h5>
-                    <h6>Nome: <span>{{ order.sender.name }}</span></h6>
-                    <h6>Cognome: <span>{{ order.sender.surname }}</span></h6>
+                    <h5>{{ $t('orderCreation.sender') }}</h5>
+                    <h6>{{ $t('orderCreation.placeholderNameReciver') }}: <span>{{ order.sender.name }}</span></h6>
+                    <h6>{{ $t('orderCreation.placeholderSurnameReciver') }}: <span>{{ order.sender.surname }}</span></h6>
                     <h6>Email: <span>{{ order.sender.email }}</span></h6>
                 </div>
 
                 <div class="col-4">
-                    <h5>Destinatario</h5>
-                    <h6>Nome: <span>{{ order.receiver.name }}</span></h6>
-                    <h6>Cognome: <span>{{ order.receiver.surname }}</span></h6>
+                    <h5>{{ $t('orderCreation.receiver') }}</h5>
+                    <h6>{{ $t('orderCreation.placeholderNameReciver') }}: <span>{{ order.receiver.name }}</span></h6>
+                    <h6>{{ $t('orderCreation.placeholderSurnameReciver') }}: <span>{{ order.receiver.surname }}</span></h6>
                     <h6>Email: <span>{{ order.receiver.email }}</span></h6>
                 </div>
 
