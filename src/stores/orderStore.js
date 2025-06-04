@@ -103,6 +103,13 @@ export const useOrderStore = defineStore('orderStore', {
 
     resetTrigger() {
         this.triggerAction = false
+    },
+
+    setAddress(type, address, city, province, zipCode) {
+        this.currentOrder[type].addressInfo.address = address
+        this.currentOrder[type].addressInfo.city = city
+        this.currentOrder[type].addressInfo.province = province
+        this.currentOrder[type].addressInfo.zipCode = zipCode
     }
   }
 });
