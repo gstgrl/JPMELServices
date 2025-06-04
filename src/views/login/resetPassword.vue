@@ -14,8 +14,6 @@
 
   // Funzione per gestire il reset della password
   const resetPassword = async () => {
-    errorMessage.value = "";
-    successMessage.value = "";
 
     if (password.value !== confirmPassword.value) {
       toastStore.show('Le password non coincidono', 'warning')
