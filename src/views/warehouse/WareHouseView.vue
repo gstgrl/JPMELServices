@@ -120,7 +120,7 @@
                     <label for="palletID">Pallet ID</label>
                 </div>
             
-                <span class="btn camera-box" @click="handleStartScanner"><font-awesome-icon :icon="['fas', 'camera']" size="lg"/></span>
+                <span class="btn camera-box" @click="handleStartScanner" v-if="device.isMobile"><font-awesome-icon :icon="['fas', 'camera']" size="lg"/></span>
             </div>
 
             <div class="button-filters-div">
