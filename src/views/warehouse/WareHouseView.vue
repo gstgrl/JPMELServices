@@ -109,6 +109,17 @@
     const handleStartScanner = () => {
         modal.value.open()
     }
+
+
+    watch(
+        () => scannerStore.scannedData,
+        (nuovo, vecchio) => {
+            palletIDFromInput.value = nuovo.text
+            pushPallet()
+            console.log(`Il valore è cambiato da ${vecchio} a ${nuovo}`)
+        },
+        {deep: true}
+    )
 </script>
 
 <template>

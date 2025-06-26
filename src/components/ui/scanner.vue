@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted, onUnmounted } from 'vue'
+    import { ref, onMounted, onUnmounted, watch } from 'vue'
     import { Modal } from 'bootstrap'
     import { useScannerStore } from '@/stores/cameraStore'
 
@@ -64,18 +64,17 @@
                         <div :id="videoElementId" class="scanner-video-container"></div>
                         
                         <div v-if="scannerStore.isScanning" class="scanner-overlay">
-                        <div class="scanner-frame"></div>
-                        <p class="scanner-hint">Inquadra il codice a barre o QR code</p>
+                            <p class="scanner-hint">Inquadra il codice a barre o QR code</p>
                         </div>
                         
                         <div v-if="scannerStore.scannedData" class="scanner-result">
-                        <p>Codice scansionato: {{ scannerStore.scannedData.text }}</p>
-                        <button @click="handleNewScan" class="btn btn-secondary">Scansiona nuovo codice</button>
+                            <p>Codice scansionato: {{ scannerStore.scannedData.text }}</p>
+                            <button @click="handleNewScan" class="btn btn-secondary">Scansiona nuovo codice</button>
                         </div>
                         
                         <div v-if="scannerStore.error" class="scanner-error">
-                        {{ scannerStore.error }}
-                        <button @click="handleRetry" class="btn btn-secondary">Riprova</button>
+                            {{ scannerStore.error }}
+                            <button @click="handleRetry" class="btn btn-secondary">Riprova</button>
                         </div>
                     </div>
                 </div>
