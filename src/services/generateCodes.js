@@ -11,52 +11,65 @@ export function generateNumericBarcode() {
 }
 
 export async function generateQrCode(palletID) {
-    const toastStore = useToastStore()
-    
-    try {
-        const dataUrl = await QRCode.toDataURL(palletID, { width: 200 })
+  const toastStore = useToastStore()
+  const pallets = usePallets()
 
-        const blob = await (await fetch(dataUrl)).blob()
-        const now = new Date()
-        const timestamp = now.toISOString().replace(/[:.]/g, "-")
-        const fileName = `pallet-${timestamp}.png`
+  let dataUrl = null
+  let fileName = null
 
-        downloadImage(dataUrl, fileName)
+  try {
+    dataUrl = await QRCode.toDataURL(palletID, { width: 200 })
 
-        // Upload su Supabase Storage
-        const { data, error: uploadError } = await supabase.storage
-            .from('palletqrcodes')  // <-- Cambia con il tuo bucket
-            .upload(fileName, blob, {
-            contentType: 'image/png', 
-            upsert: true
-        })
-        if(uploadError)  {
-            toastStore.show('Error during uploading img', 'danger')
-            throw new Error(`Error during uploading img: ${uploadError.message}`)
-        }
+    const blob = await (await fetch(dataUrl)).blob()
+    const now = new Date()
+    const timestamp = now.toISOString().replace(/[:.]/g, "-")
+    fileName = `pallet-${timestamp}.png`
 
-        const { data: publicUrlData } = supabase.storage.from('palletqrcodes').getPublicUrl(fileName)
-        if(!publicUrlData) {
-            toastStore.show('Error during fetching public url', 'danger')
-            throw new Error(`Error during fetching public url`)
-        }
+    // Upload su Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from('palletqrcodes')
+      .upload(fileName, blob, {
+        contentType: 'image/png',
+        upsert: true,
+      })
 
-        const qrCodeImg = publicUrlData.publicUrl
-        
-        const {data: palletData, error: palletError} = await usePallets().updatePallet(palletID, {qrCodeImage: qrCodeImg})
-        if(palletError)  {
-            toastStore.show('Error during pallet closure action', 'danger')
-            throw new Error(`Error during pallet closure action: ${palletError.message}`)
-        }
-        
-
-        toastStore.show('QrCode img saved and geenrated', 'success')
-        
-    } catch (error) {
-        console.error('Error during pallet closure action:', error);
-        toastStore.show('Error during pallet closure action', 'danger')
-        return;
+    if (uploadError) {
+      toastStore.show('Errore durante upload immagine QR', 'danger')
+      throw uploadError
     }
+
+    // Recupera URL pubblico
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('palletqrcodes')
+      .getPublicUrl(fileName)
+
+    if (!publicUrlData || !publicUrlData.publicUrl) {
+      toastStore.show('Errore nel recupero del public URL', 'danger')
+      throw new Error('Public URL non disponibile')
+    }
+
+    const qrCodeImg = publicUrlData.publicUrl
+
+    const { error: palletError } = await pallets.updatePallet(palletID, {
+      qrCodeImage: qrCodeImg,
+    })
+
+    if (palletError) {
+      toastStore.show('Errore aggiornando il pallet', 'danger')
+      throw palletError
+    }
+
+    toastStore.show('QR Code generato e salvato correttamente!', 'success')
+  } catch (error) {
+    console.error('Errore nella generazione del QR:', error)
+    toastStore.show('Errore nella generazione o salvataggio QR', 'danger')
+  } finally {
+    // Salva l'immagine localmente solo se è stata generata
+    if (dataUrl && fileName) {
+      downloadImage(dataUrl, fileName)
+    }
+  }
 }
 
 
