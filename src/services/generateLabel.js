@@ -82,10 +82,6 @@ export async function generaEtichettePDF(codice, mittente, destinatario, indiriz
       doc.setFontSize(styles.collo.size);
       doc.setFont('helvetica', styles.collo.style);
       doc.text(`Collo ${i}/${totaleColli}`, 140, 95, { align: 'right' });
-
-      // Data
-      doc.setFontSize(8);
-      doc.text(`${new Date().toLocaleDateString('it-IT')}`, 25, 100, { align: 'right' });
     }
 
     doc.save(`Etichette_${codice}.pdf`);

@@ -74,10 +74,6 @@ export async function generaEtichettaA4PDF(codice, mittente, destinatario, indir
     doc.setFontSize(styles.barcodeText.size);
     doc.text(`CODICE: ${codice}`, styles.barcode.x + styles.barcode.w/2, styles.barcode.y + styles.barcode.h + 5, { align: 'center' });
 
-    // Data in basso a destra
-    doc.setFontSize(12);
-    doc.text(`Data: ${new Date().toLocaleDateString('it-IT')}`, 160, 280);
-
     // Linea di separazione in fondo
     doc.line(20, 285, 190, 285);
 
