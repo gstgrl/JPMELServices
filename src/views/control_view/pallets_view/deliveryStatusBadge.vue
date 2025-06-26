@@ -12,7 +12,6 @@
     })
 
 
-
     // Mappa numerica degli stili
     const statusStyles = computed(() => ({
         draft: {

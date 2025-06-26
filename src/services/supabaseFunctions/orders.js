@@ -32,7 +32,9 @@ export function useOrders() {
   }
 
   const getOrderWithBinding = async() => {
-    const { data, error } = await supabase.from("orders").select("id, barcode, status, description, sender:sender_id (id, name, surname, email), receiver:receiver_id (id, name, surname, email), pallet:pallet_id (id, status), package_number")
+    const { data, error } = await supabase.from("orders")
+    .select("id, barcode, status, description, sender:sender_id (id, name, surname, email), receiver:receiver_id (id, name, surname, email), pallet:pallet_id (id, status), package_number")
+    .order('status', { ascending: true })
     return { data, error }
   }
 

@@ -14,7 +14,7 @@ export function usePallets() {
   }
 
   const getPalletsWithBinding = async() => {
-    const { data, error } = await supabase.from("pallets").select("id, created_at, status, orders(barcode, package_number)")
+    const { data, error } = await supabase.from("pallets").select("id, created_at, status, qrCodeImage, orders(id, barcode, package_number)").order('status', { ascending: true })
     return { data, error }
   }
 

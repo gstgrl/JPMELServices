@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { createI18n } from 'vue-i18n'
 
 // Importa alcune icone che vuoi usare
-import { faCamera, faXmark, faPallet, faBox, faGear, faWarehouse, faTrash, faCheckCircle, faTruck, faPlus, faEraser, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faXmark, faPallet, faBox, faGear, faWarehouse, faTrash, faCheckCircle, faTruck, faPlus, faEraser, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 import App from "./App.vue";
 import router from "./router";
@@ -21,7 +21,7 @@ import "@/assets/style.css"
 
 
 // Aggiungi le icone alla libreria globale
-library.add(faCamera, faPallet, faXmark, faBox, faGear, faWarehouse, faTrash, faCheckCircle, faTruck, faPlus, faEraser, faPen);
+library.add(faCamera, faPallet, faXmark, faBox, faGear, faWarehouse, faTrash, faCheckCircle, faTruck, faPlus, faEraser, faPen, faTrashCan);
 
 const i18n = createI18n({
     legacy: false,
