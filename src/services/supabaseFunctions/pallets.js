@@ -13,6 +13,11 @@ export function usePallets() {
     }
   }
 
+  const getPalletsWithBinding = async() => {
+    const { data, error } = await supabase.from("pallets").select("id, created_at, status, orders(barcode, package_number)")
+    return { data, error }
+  }
+
   const getPallet = async (id) => {
     const { data, error } = await supabase.from("pallets").eq("id", id)
     return { data, error }
@@ -50,6 +55,7 @@ export function usePallets() {
     createPallet,
     updatePallet,
     deletePallet,
-    returnPalletStatus
+    returnPalletStatus,
+    getPalletsWithBinding
   }
 }

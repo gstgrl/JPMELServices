@@ -10,7 +10,7 @@ import resetPassword from '@/views/login/resetPassword.vue';
 //Managment Views
 import Dashboard from '@/views/dashboard/Dashboard.vue';
 import ordersView from '@/views/control_view/orders_view/ordersView.vue';
-import palletView from '@/views/control_view/palletView.vue';
+import palletView from '@/views/control_view/pallets_view/palletView.vue';
 
 import CreateUser from '@/views/creating_user/CreateUser.vue';
 import newPassword from '@/views/creating_user/newPassword.vue';
