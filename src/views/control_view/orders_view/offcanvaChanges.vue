@@ -10,16 +10,23 @@
         }
     })
 
-    const emit = defineEmits(['update-status'])
+    const emit = defineEmits(['update-status', 'order-deleted'])
 
     const optionSelected = ref('')
 
     const updateOrder = () => {
         emit('update-status', {
-            status: optionSelected.value,
-            id: props.order.id
+            id: props.order.id,
+            status: optionSelected.value
         })
 
+    }
+
+    const deleteOrder = () => {
+        emit('order-deleted', {
+            value: true,
+            id: props.order.id
+        })
     }
 </script>
 
@@ -32,7 +39,7 @@
         </div>
 
 
-        <div class="offcanvas-body">
+        <div class="offcanvas-body d-flex flex-column">
             <form @submit.prevent="updateOrder">
                 <select class="form-select" aria-label="Default select example" v-model="optionSelected">
                     <option value="" selected disabled>{{ $t('controlView.orders.orderStatus') }}</option>
@@ -44,6 +51,8 @@
 
                 <button class="btn btn-primary mx-auto mt-4" data-bs-dismiss="offcanvas" aria-label="Close" type="submit" v-if="optionSelected">Salva</button>
             </form>
+
+            <button class="btn btn-danger mt-auto" @click="deleteOrder" data-bs-dismiss="offcanvas" aria-label="Close" type="submit">Elimina ordine</button>
         </div>
     </div>
 </template>

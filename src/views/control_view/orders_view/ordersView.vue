@@ -32,10 +32,16 @@
             orders.value[index].status = status
         }
     }
+    const deleteOrder = async({ id, value }) => {
+        if(value) {
+            orders.value = orders.value.filter(o => o.id !== id)
+            const {data, error} = await useOrders().deleteOrder(id)
+        }
+    }
 </script>
 
 <template>
-    <div class="container">
+    <div class="container" v-if="orders.length != 0">
         <div class="card my-2" v-for="(order) in orders">
             <div class="card-header d-flex justify-content-between">
                 <h5>📄{{ order.barcode }} - 📦{{ order.package_number }}</h5>
@@ -65,7 +71,10 @@
             </div>
         </div>
 
-        <offcanvaChanges :order="orderForOffcanva" @update-status="updateStatus"/>
+        <offcanvaChanges :order="orderForOffcanva" @update-status="updateStatus" @order-deleted="deleteOrder"/>
+    </div>
+    <div class="container text-center" v-else>
+        <h4 class="font-monospace mt-5"><font-awesome-icon :icon="['fas', 'circle-exclamation']" /> Nessun ordine presente</h4>
     </div>
 </template>
 

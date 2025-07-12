@@ -37,7 +37,7 @@
 </script>
 
 <template>
-    <div class="container">
+    <div class="container" v-if="pallets.length != 0">
         <div class="card my-2" v-for="(pallet) in pallets" v-show="pallet.status != 'draft'">
 
             <div class="card-header d-flex justify-content-between">
@@ -60,6 +60,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="container text-center" v-else>
+        <h4 class="font-monospace mt-5"><font-awesome-icon :icon="['fas', 'circle-exclamation']" /> Nessun Bancale presente</h4>
     </div>
 </template>
 

@@ -46,6 +46,11 @@
         modalInstance?.hide()
     }
 
+    watch(
+        () => scannerStore.scannedData, close,
+        {deep: true}
+    )
+
     defineExpose({ open })
 </script>
 
